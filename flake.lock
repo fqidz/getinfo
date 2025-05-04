@@ -16,9 +16,26 @@
         "type": "github"
       }
     },
+    "nixpkgs-fork": {
+      "locked": {
+        "lastModified": 1746343586,
+        "narHash": "sha256-MCOYxVmHPUIbkvcekUDTMHZY88fq2WO0TV6wLvTPyv8=",
+        "owner": "fqidz",
+        "repo": "nixpkgs",
+        "rev": "5c32c237e1039e7d0a2f4c03969bb30a53f9a525",
+        "type": "github"
+      },
+      "original": {
+        "owner": "fqidz",
+        "ref": "dbus",
+        "repo": "nixpkgs",
+        "type": "github"
+      }
+    },
     "root": {
       "inputs": {
-        "nixpkgs": "nixpkgs"
+        "nixpkgs": "nixpkgs",
+        "nixpkgs-fork": "nixpkgs-fork"
       }
     }
   },

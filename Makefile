@@ -19,7 +19,7 @@ main.o: out main.c
 	$(CC) $(ARGS) -c main.c -o out/main.o
 
 main: main.o
-	$(CC) -Lout out/main.o -o out/main
+	$(CC) out/main.o -o out/main
 
 .PHONY: run
 run: main
