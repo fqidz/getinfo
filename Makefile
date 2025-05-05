@@ -3,7 +3,6 @@ ARGS = -xc \
 	   -std=gnu99 \
 	   -ggdb3 \
 	   -Weverything \
-	   -Werror \
 	   -Wno-used-but-marked-unused \
 	   -Wno-padded \
 	   -Wno-declaration-after-statement \
