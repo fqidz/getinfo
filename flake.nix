@@ -41,6 +41,7 @@
       ];
 
       buildInputs = [
+        pkgs.glibc
         pkgs-fork.dbus.dev
         pkgs-fork.dbus.lib
       ];

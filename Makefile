@@ -1,6 +1,6 @@
 CC = clang
 ARGS = -xc \
-	   -std=c99 \
+	   -std=gnu99 \
 	   -ggdb3 \
 	   -Weverything \
 	   -Werror \
@@ -19,7 +19,7 @@ main.o: out main.c
 	$(CC) $(ARGS) -c main.c -o out/main.o
 
 main: main.o
-	$(CC) out/main.o -o out/main
+	$(CC) out/main.o -o out/main -ldbus-1
 
 .PHONY: run
 run: main

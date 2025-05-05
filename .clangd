@@ -1,7 +1,7 @@
 CompileFlags:
   Add: [
     -xc,
-    -std=c99,
+    -std=gnu99,
     -Weverything,
     -Wno-empty-translation-unit
     -Wno-used-but-marked-unused,
