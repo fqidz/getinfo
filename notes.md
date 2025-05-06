@@ -28,6 +28,31 @@ dbus-send \
     string:'org.mpris.MediaPlayer2.Player'   `# arg0`           \
     string:'Position'                        `# arg1`           \
 ```
+### When to update values?
+#### signal `org.freedesktop.DBus.NameAcquired` value matches `org.mpris.MediaPlayer2.*`
+Get all the properties of the bus name and push onto the watched buses.
+
+#### signal `org.freedesktop.DBus.Properties.PropertiesChanged` for path `/org/mpris/MediaPlayer2`
+Update all the properties of the bus that emitted that signal [(defined here)](https://specifications.freedesktop.org/mpris-spec/latest/Player_Interface.html#Property:PlaybackStatus)
+
+If the `PlaybackStatus` property of a bus changes to `Playing`, set that bus as
+the latest active bus. The most recent bus with the `PlaybackStatus` that
+changed to `Playing` will be set as the latest active bus.
+
+#### `Position` property of a bus changes
+If the `PlaybackStatus` of that bus is `Playing`, set that bus as the latest
+active bus. Else, keep the bus as it is.
+
+This distinction is useful -- as for example: When you're listening to music on
+Spotify while also having a paused YouTube video where you're moving its
+position. (eg. skipping 10 seconds forwards/backwards, moving the playhead to a
+different position)
+
+<!-- If there are multiple buses that are both playing (ie. their `Position` -->
+<!-- property is increasing), set the most recent one as the latest active bus. -->
+
+####
+
 
 ### Keeping track of MPRIS bus names
 #### On script startup
@@ -71,7 +96,7 @@ Firefox while the script is already running. We can detect this by listening to
 the `org.freedesktop.DBus.NameAcquired` signal [(defined here)](https://dbus.freedesktop.org/doc/dbus-specification.html#message-bus-messages)
 
 Running `dbus-monitor` and then opening Spotify, we can see that the
-`NameAcquired` signal -- which includes the bus name in its value -- is emitted
+`NameAcquired` signal -- which includes the bus name in its value -- is
 after the `RequestName` method is called:
 
 ```
@@ -98,3 +123,31 @@ member=NameAcquired
 
 I'm not sure if there's a way to directly read the `RequestName` method call,
 so we read the `NameAcquired` signal instead
+
+### Arguments
+#### `-l or --latest`
+Only output the latest active bus, as opposed to the default where it outputs
+all active buses
+
+#### `-f or --following`
+Continously output the bus properties. The output depends whether or not
+`--latest` is set.
+
+This should be implemented properly so as to not miss any signals/updates,
+while at the same time being efficient/sparing and outputting only when it is
+required.
+
+
+### Ideas (WIP)
+#### User Configuration
+Have a configuration file where the user can specify which buses should be
+prioritized and set as the latest active bus.
+
+For example, if the user wants to set Spotify as the highest priority bus, so
+that it would be the one always displayed in their widgets/bars even while
+they're watching a YouTube video at the same time.
+
+#### How to
+Have an option where it only outputs the latest active bus
+
+
