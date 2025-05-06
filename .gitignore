@@ -1,4 +1,1 @@
-out/*
-**/*.cov
-**/*.fuzz
-**/HONGGFUZZ.REPORT.TXT
+/target
