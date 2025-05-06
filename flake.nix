@@ -15,6 +15,12 @@
         pkgs.rust-analyzer
         pkgs.rustfmt
         pkgs.cargo
+        pkgs.hyperfine
+        pkgs.upx
+      ];
+
+      buildInputs = [
+        pkgs.lld
       ];
     };
   };
