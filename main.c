@@ -17,11 +17,8 @@
 void get_property(void)
 {
     DBusMessage *msg;
-    DBusMessageIter args;
     DBusConnection *conn;
     DBusError err;
-    DBusPendingCall *pending;
-    int ret;
 
     // initialiset the errors
     dbus_error_init(&err);
@@ -37,7 +34,7 @@ void get_property(void)
     }
 
     // request our name on the bus
-    ret = dbus_bus_request_name(conn, "user.BarScripts",
+    int ret = dbus_bus_request_name(conn, "user.BarScripts",
                                 DBUS_NAME_FLAG_REPLACE_EXISTING, &err);
     if (dbus_error_is_set(&err)) {
         fprintf(stderr, "Name Error (%s)\n", err.message);
@@ -59,6 +56,8 @@ void get_property(void)
         exit(1);
     }
 
+    DBusMessageIter args;
+
     char *interface_name = "org.mpris.MediaPlayer2.Player";
     char *property_name = "Position";
     // append arguments
@@ -73,6 +72,8 @@ void get_property(void)
         fprintf(stderr, "Out Of Memory!\n");
         exit(1);
     }
+
+    DBusPendingCall *pending;
 
     // send message and get a handle for a reply
     if (!dbus_connection_send_with_reply(conn, msg, &pending,
