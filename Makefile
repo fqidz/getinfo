@@ -18,7 +18,7 @@ main.o: out main.c
 	$(CC) $(ARGS) -c main.c -o out/main.o
 
 main: main.o
-	$(CC) out/main.o -o out/main -ldbus-1
+	$(CC) out/main.o -o out/main -ldbus-1 -lm
 
 .PHONY: run
 run: main

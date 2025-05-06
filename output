@@ -1,0 +1,1078 @@
+signal time=1746439582.855758 sender=org.freedesktop.DBus -> destination=:1.174 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameAcquired
+   string ":1.174"
+signal time=1746439582.855825 sender=org.freedesktop.DBus -> destination=:1.174 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameLost
+   string ":1.174"
+method call time=1746439584.365323 sender=:1.175 -> destination=org.freedesktop.DBus serial=1 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=Hello
+method return time=1746439584.365372 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=1
+   string ":1.175"
+signal time=1746439584.365390 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string ":1.175"
+   string ""
+   string ":1.175"
+signal time=1746439584.365412 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameAcquired
+   string ":1.175"
+method call time=1746439584.366083 sender=:1.175 -> destination=org.freedesktop.DBus serial=2 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',interface='ca.desrt.dconf.Writer',path='/ca/desrt/dconf/Writer/user',arg0path='/org/gnome/desktop/interface/'"
+method return time=1746439584.366089 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=2
+method call time=1746439584.366091 sender=:1.175 -> destination=org.freedesktop.DBus serial=3 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',interface='ca.desrt.dconf.Writer',path='/ca/desrt/dconf/Writer/user',arg0path='/org/gnome/desktop/peripherals/mouse/'"
+method return time=1746439584.366095 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=3
+method call time=1746439584.366097 sender=:1.175 -> destination=org.freedesktop.DBus serial=4 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',interface='ca.desrt.dconf.Writer',path='/ca/desrt/dconf/Writer/user',arg0path='/org/gnome/desktop/sound/'"
+method return time=1746439584.366100 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=4
+method call time=1746439584.366102 sender=:1.175 -> destination=org.freedesktop.DBus serial=5 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',interface='ca.desrt.dconf.Writer',path='/ca/desrt/dconf/Writer/user',arg0path='/org/gnome/desktop/privacy/'"
+method return time=1746439584.366106 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=5
+method call time=1746439584.366108 sender=:1.175 -> destination=org.freedesktop.DBus serial=6 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',interface='ca.desrt.dconf.Writer',path='/ca/desrt/dconf/Writer/user',arg0path='/org/gnome/desktop/wm/preferences/'"
+method return time=1746439584.366111 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=6
+method call time=1746439584.366113 sender=:1.175 -> destination=org.freedesktop.DBus serial=7 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',interface='ca.desrt.dconf.Writer',path='/ca/desrt/dconf/Writer/user',arg0path='/org/gnome/desktop/a11y/'"
+method return time=1746439584.366116 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=7
+method call time=1746439584.366118 sender=:1.175 -> destination=org.freedesktop.DBus serial=8 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',interface='ca.desrt.dconf.Writer',path='/ca/desrt/dconf/Writer/user',arg0path='/org/gnome/desktop/a11y/interface/'"
+method return time=1746439584.366122 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=8
+method call time=1746439584.402860 sender=:1.176 -> destination=org.freedesktop.DBus serial=1 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=Hello
+method return time=1746439584.402894 sender=org.freedesktop.DBus -> destination=:1.176 serial=4294967295 reply_serial=1
+   string ":1.176"
+signal time=1746439584.402906 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string ":1.176"
+   string ""
+   string ":1.176"
+signal time=1746439584.402924 sender=org.freedesktop.DBus -> destination=:1.176 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameAcquired
+   string ":1.176"
+method call time=1746439584.403091 sender=:1.176 -> destination=org.freedesktop.DBus serial=2 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal', path='/org/freedesktop/DBus/Local',interface='org.freedesktop.DBus.Local', member='Disconnected'"
+method return time=1746439584.403110 sender=org.freedesktop.DBus -> destination=:1.176 serial=4294967295 reply_serial=2
+method call time=1746439584.403291 sender=:1.176 -> destination=org.freedesktop.DBus serial=3 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameHasOwner
+   string "org.freedesktop.portal.Desktop"
+method return time=1746439584.403438 sender=org.freedesktop.DBus -> destination=:1.176 serial=4294967295 reply_serial=3
+   boolean true
+method call time=1746439584.403448 sender=:1.176 -> destination=org.freedesktop.portal.Desktop serial=4 path=/org/freedesktop/portal/desktop; interface=org.freedesktop.DBus.Properties; member=Get
+   string "org.freedesktop.portal.FileChooser"
+   string "version"
+error time=1746439584.403523 sender=:1.25 -> destination=:1.176 error_name=org.freedesktop.DBus.Error.InvalidArgs reply_serial=4
+   string "No such interface “org.freedesktop.portal.FileChooser”"
+method call time=1746439584.412260 sender=:1.177 -> destination=org.freedesktop.DBus serial=1 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=Hello
+method return time=1746439584.412297 sender=org.freedesktop.DBus -> destination=:1.177 serial=4294967295 reply_serial=1
+   string ":1.177"
+signal time=1746439584.412309 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string ":1.177"
+   string ""
+   string ":1.177"
+signal time=1746439584.412326 sender=org.freedesktop.DBus -> destination=:1.177 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameAcquired
+   string ":1.177"
+method call time=1746439584.412554 sender=:1.177 -> destination=org.freedesktop.DBus serial=2 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal', path='/org/freedesktop/DBus/Local',interface='org.freedesktop.DBus.Local', member='Disconnected'"
+method return time=1746439584.412583 sender=org.freedesktop.DBus -> destination=:1.177 serial=4294967295 reply_serial=2
+method call time=1746439584.412630 sender=:1.177 -> destination=org.freedesktop.DBus serial=3 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameHasOwner
+   string "org.freedesktop.portal.Desktop"
+method return time=1746439584.412641 sender=org.freedesktop.DBus -> destination=:1.177 serial=4294967295 reply_serial=3
+   boolean true
+method call time=1746439584.422853 sender=:1.178 -> destination=org.freedesktop.DBus serial=1 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=Hello
+method return time=1746439584.422883 sender=org.freedesktop.DBus -> destination=:1.178 serial=4294967295 reply_serial=1
+   string ":1.178"
+signal time=1746439584.422895 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string ":1.178"
+   string ""
+   string ":1.178"
+signal time=1746439584.422911 sender=org.freedesktop.DBus -> destination=:1.178 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameAcquired
+   string ":1.178"
+method call time=1746439584.423162 sender=:1.178 -> destination=org.freedesktop.DBus serial=2 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal', path='/org/freedesktop/DBus/Local',interface='org.freedesktop.DBus.Local', member='Disconnected'"
+method return time=1746439584.423179 sender=org.freedesktop.DBus -> destination=:1.178 serial=4294967295 reply_serial=2
+method call time=1746439584.423323 sender=:1.178 -> destination=org.freedesktop.DBus serial=3 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameHasOwner
+   string "org.freedesktop.Notifications"
+method return time=1746439584.423339 sender=org.freedesktop.DBus -> destination=:1.178 serial=4294967295 reply_serial=3
+   boolean true
+method call time=1746439584.423425 sender=:1.178 -> destination=org.freedesktop.Notifications serial=4 path=/org/freedesktop/Notifications; interface=org.freedesktop.Notifications; member=GetCapabilities
+method return time=1746439584.423706 sender=:1.71 -> destination=:1.178 serial=28 reply_serial=4
+   array [
+      string "actions"
+      string "body"
+      string "body-hyperlinks"
+      string "icon-static"
+      string "synchronous"
+      string "private-synchronous"
+      string "x-canonical-private-synchronous"
+      string "x-dunst-stack-tag"
+   ]
+method call time=1746439584.423856 sender=:1.178 -> destination=org.freedesktop.Notifications serial=5 path=/org/freedesktop/Notifications; interface=org.freedesktop.Notifications; member=GetServerInformation
+method return time=1746439584.424000 sender=:1.71 -> destination=:1.178 serial=29 reply_serial=5
+   string "dunst"
+   string "knopwob"
+   string "1.12.2"
+   string "1.2"
+method call time=1746439584.424237 sender=:1.178 -> destination=org.freedesktop.DBus serial=6 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',sender='org.freedesktop.DBus',arg0='org.freedesktop.Notifications'"
+method return time=1746439584.424258 sender=org.freedesktop.DBus -> destination=:1.178 serial=4294967295 reply_serial=6
+method call time=1746439584.424387 sender=:1.178 -> destination=org.freedesktop.DBus serial=7 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.freedesktop.Notifications"
+method return time=1746439584.424409 sender=org.freedesktop.DBus -> destination=:1.178 serial=4294967295 reply_serial=7
+   string ":1.71"
+method call time=1746439584.424494 sender=:1.178 -> destination=org.freedesktop.DBus serial=8 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal', sender='org.freedesktop.Notifications', interface='org.freedesktop.Notifications', path='/org/freedesktop/Notifications'"
+method return time=1746439584.424508 sender=org.freedesktop.DBus -> destination=:1.178 serial=4294967295 reply_serial=8
+method call time=1746439584.424608 sender=:1.178 -> destination=org.freedesktop.DBus serial=9 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.freedesktop.Notifications"
+method return time=1746439584.424622 sender=org.freedesktop.DBus -> destination=:1.178 serial=4294967295 reply_serial=9
+   string ":1.71"
+method call time=1746439584.424713 sender=:1.178 -> destination=org.freedesktop.DBus serial=10 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.freedesktop.Notifications"
+method return time=1746439584.424720 sender=org.freedesktop.DBus -> destination=:1.178 serial=4294967295 reply_serial=10
+   string ":1.71"
+method call time=1746439584.432089 sender=:1.175 -> destination=org.freedesktop.DBus serial=9 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.gtk.Settings'"
+method return time=1746439584.432128 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=9
+method call time=1746439584.432131 sender=:1.175 -> destination=org.freedesktop.DBus serial=10 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.gtk.Settings"
+error time=1746439584.432136 sender=org.freedesktop.DBus -> destination=:1.175 error_name=org.freedesktop.DBus.Error.NameHasNoOwner reply_serial=10
+   string "The name does not have an owner"
+method call time=1746439584.432140 sender=:1.175 -> destination=org.freedesktop.DBus serial=11 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.gtk.Settings',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',path='/org/gtk/Settings',arg0='org.gtk.Settings'"
+method return time=1746439584.432144 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=11
+method call time=1746439584.432147 sender=:1.175 -> destination=org.freedesktop.DBus serial=12 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.gtk.Settings',interface='org.gtk.Settings',path='/org/gtk/Settings'"
+method return time=1746439584.432151 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=12
+method call time=1746439584.432192 sender=:1.175 -> destination=org.freedesktop.DBus serial=13 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=StartServiceByName
+   string "org.gtk.Settings"
+   uint32 0
+error time=1746439584.432199 sender=org.freedesktop.DBus -> destination=:1.175 error_name=org.freedesktop.DBus.Error.ServiceUnknown reply_serial=13
+   string "The name is not activatable"
+method call time=1746439584.432203 sender=:1.175 -> destination=org.freedesktop.DBus serial=14 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.mpris.MediaPlayer2.spotify'"
+method return time=1746439584.432207 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=14
+method call time=1746439584.432210 sender=:1.175 -> destination=org.freedesktop.DBus serial=15 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.mpris.MediaPlayer2.spotify"
+error time=1746439584.432214 sender=org.freedesktop.DBus -> destination=:1.175 error_name=org.freedesktop.DBus.Error.NameHasNoOwner reply_serial=15
+   string "The name does not have an owner"
+method call time=1746439584.433924 sender=:1.175 -> destination=org.freedesktop.DBus serial=16 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.gtk.Settings"
+error time=1746439584.433944 sender=org.freedesktop.DBus -> destination=:1.175 error_name=org.freedesktop.DBus.Error.NameHasNoOwner reply_serial=16
+   string "The name does not have an owner"
+method call time=1746439584.433948 sender=:1.175 -> destination=org.freedesktop.DBus serial=17 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.mpris.MediaPlayer2.spotify'"
+method return time=1746439584.433952 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=17
+method call time=1746439584.451117 sender=:1.175 -> destination=org.a11y.Bus serial=18 path=/org/a11y/bus; interface=org.freedesktop.DBus.Properties; member=Get
+   string "org.a11y.Status"
+   string "IsEnabled"
+error time=1746439584.451146 sender=org.freedesktop.DBus -> destination=:1.175 error_name=org.freedesktop.DBus.Error.ServiceUnknown reply_serial=18
+   string "The name is not activatable"
+method call time=1746439584.455481 sender=:1.175 -> destination=org.freedesktop.DBus serial=19 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.gnome.SettingsDaemon.MediaKeys'"
+method return time=1746439584.455524 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=19
+method call time=1746439584.455526 sender=:1.175 -> destination=org.freedesktop.DBus serial=20 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.gnome.SettingsDaemon.MediaKeys"
+error time=1746439584.455530 sender=org.freedesktop.DBus -> destination=:1.175 error_name=org.freedesktop.DBus.Error.NameHasNoOwner reply_serial=20
+   string "The name does not have an owner"
+method call time=1746439584.455533 sender=:1.175 -> destination=org.freedesktop.DBus serial=21 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.gnome.SettingsDaemon.MediaKeys',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',path='/org/gnome/SettingsDaemon/MediaKeys',arg0='org.gnome.SettingsDaemon.MediaKeys'"
+method return time=1746439584.455537 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=21
+method call time=1746439584.455539 sender=:1.175 -> destination=org.freedesktop.DBus serial=22 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.gnome.SettingsDaemon.MediaKeys',interface='org.gnome.SettingsDaemon.MediaKeys',path='/org/gnome/SettingsDaemon/MediaKeys'"
+method return time=1746439584.455543 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=22
+method call time=1746439584.455545 sender=:1.175 -> destination=org.freedesktop.DBus serial=23 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=StartServiceByName
+   string "org.gnome.SettingsDaemon.MediaKeys"
+   uint32 0
+error time=1746439584.455549 sender=org.freedesktop.DBus -> destination=:1.175 error_name=org.freedesktop.DBus.Error.ServiceUnknown reply_serial=23
+   string "The name is not activatable"
+method call time=1746439584.455598 sender=:1.175 -> destination=org.freedesktop.DBus serial=24 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.gnome.SettingsDaemon.MediaKeys"
+error time=1746439584.455602 sender=org.freedesktop.DBus -> destination=:1.175 error_name=org.freedesktop.DBus.Error.NameHasNoOwner reply_serial=24
+   string "The name does not have an owner"
+method call time=1746439584.455731 sender=:1.175 -> destination=org.gnome.SettingsDaemon.MediaKeys serial=25 path=/org/gnome/SettingsDaemon/MediaKeys; interface=org.gnome.SettingsDaemon.MediaKeys; member=GrabMediaPlayerKeys
+   string "com.spotify.music"
+   uint32 0
+error time=1746439584.455736 sender=org.freedesktop.DBus -> destination=:1.175 error_name=org.freedesktop.DBus.Error.ServiceUnknown reply_serial=25
+   string "The name is not activatable"
+method call time=1746439584.455996 sender=:1.175 -> destination=org.freedesktop.DBus serial=26 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.kde.StatusNotifierWatcher'"
+method return time=1746439584.456001 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=26
+method call time=1746439584.456003 sender=:1.175 -> destination=org.freedesktop.DBus serial=27 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.kde.StatusNotifierWatcher"
+error time=1746439584.456006 sender=org.freedesktop.DBus -> destination=:1.175 error_name=org.freedesktop.DBus.Error.NameHasNoOwner reply_serial=27
+   string "The name does not have an owner"
+method call time=1746439584.456044 sender=:1.175 -> destination=org.freedesktop.DBus serial=28 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',interface='com.canonical.dbusmenu',member='FindServers'"
+method return time=1746439584.456055 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=28
+signal time=1746439584.456076 sender=:1.175 -> destination=(null destination) serial=29 path=/org/ayatana/NotificationItem/spotify_client/Menu; interface=com.canonical.dbusmenu; member=LayoutUpdated
+   uint32 2
+   int32 0
+method call time=1746439584.456129 sender=:1.175 -> destination=org.freedesktop.DBus serial=30 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RequestName
+   string "org.mpris.MediaPlayer2.spotify"
+   uint32 0
+signal time=1746439584.456134 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string "org.mpris.MediaPlayer2.spotify"
+   string ""
+   string ":1.175"
+signal time=1746439584.456141 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameAcquired
+   string "org.mpris.MediaPlayer2.spotify"
+method return time=1746439584.456144 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=30
+   uint32 1
+method call time=1746439584.456541 sender=:1.43 -> destination=org.freedesktop.DBus serial=115 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.mpris.MediaPlayer2.spotify'"
+method return time=1746439584.456560 sender=org.freedesktop.DBus -> destination=:1.43 serial=4294967295 reply_serial=115
+method call time=1746439584.456562 sender=:1.43 -> destination=org.freedesktop.DBus serial=116 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.mpris.MediaPlayer2.spotify"
+method return time=1746439584.456566 sender=org.freedesktop.DBus -> destination=:1.43 serial=4294967295 reply_serial=116
+   string ":1.175"
+method call time=1746439584.456569 sender=:1.43 -> destination=org.freedesktop.DBus serial=117 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',path='/org/mpris/MediaPlayer2',arg0='org.mpris.MediaPlayer2.Player'"
+method return time=1746439584.456572 sender=org.freedesktop.DBus -> destination=:1.43 serial=4294967295 reply_serial=117
+method call time=1746439584.456575 sender=:1.43 -> destination=org.freedesktop.DBus serial=118 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.mpris.MediaPlayer2.Player',path='/org/mpris/MediaPlayer2'"
+method return time=1746439584.456578 sender=org.freedesktop.DBus -> destination=:1.43 serial=4294967295 reply_serial=118
+method call time=1746439584.456580 sender=:1.43 -> destination=org.freedesktop.DBus serial=119 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=StartServiceByName
+   string "org.mpris.MediaPlayer2.spotify"
+   uint32 0
+error time=1746439584.456585 sender=org.freedesktop.DBus -> destination=:1.43 error_name=org.freedesktop.DBus.Error.ServiceUnknown reply_serial=119
+   string "The name is not activatable"
+method call time=1746439584.456719 sender=:1.47 -> destination=org.freedesktop.DBus serial=115 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.mpris.MediaPlayer2.spotify'"
+method return time=1746439584.456723 sender=org.freedesktop.DBus -> destination=:1.47 serial=4294967295 reply_serial=115
+method call time=1746439584.456725 sender=:1.47 -> destination=org.freedesktop.DBus serial=116 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.mpris.MediaPlayer2.spotify"
+method return time=1746439584.456738 sender=org.freedesktop.DBus -> destination=:1.47 serial=4294967295 reply_serial=116
+   string ":1.175"
+method call time=1746439584.456741 sender=:1.47 -> destination=org.freedesktop.DBus serial=117 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',path='/org/mpris/MediaPlayer2',arg0='org.mpris.MediaPlayer2.Player'"
+method return time=1746439584.456746 sender=org.freedesktop.DBus -> destination=:1.47 serial=4294967295 reply_serial=117
+method call time=1746439584.456749 sender=:1.47 -> destination=org.freedesktop.DBus serial=118 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.mpris.MediaPlayer2.Player',path='/org/mpris/MediaPlayer2'"
+method return time=1746439584.456758 sender=org.freedesktop.DBus -> destination=:1.47 serial=4294967295 reply_serial=118
+method call time=1746439584.456761 sender=:1.47 -> destination=org.freedesktop.DBus serial=119 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=StartServiceByName
+   string "org.mpris.MediaPlayer2.spotify"
+   uint32 0
+error time=1746439584.456769 sender=org.freedesktop.DBus -> destination=:1.47 error_name=org.freedesktop.DBus.Error.ServiceUnknown reply_serial=119
+   string "The name is not activatable"
+method call time=1746439584.456773 sender=:1.45 -> destination=org.freedesktop.DBus serial=115 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.mpris.MediaPlayer2.spotify'"
+method return time=1746439584.456778 sender=org.freedesktop.DBus -> destination=:1.45 serial=4294967295 reply_serial=115
+method call time=1746439584.456781 sender=:1.45 -> destination=org.freedesktop.DBus serial=116 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.mpris.MediaPlayer2.spotify"
+method return time=1746439584.456785 sender=org.freedesktop.DBus -> destination=:1.45 serial=4294967295 reply_serial=116
+   string ":1.175"
+method call time=1746439584.456789 sender=:1.45 -> destination=org.freedesktop.DBus serial=117 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',path='/org/mpris/MediaPlayer2',arg0='org.mpris.MediaPlayer2.Player'"
+method return time=1746439584.456794 sender=org.freedesktop.DBus -> destination=:1.45 serial=4294967295 reply_serial=117
+method call time=1746439584.456902 sender=:1.45 -> destination=org.freedesktop.DBus serial=118 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.mpris.MediaPlayer2.Player',path='/org/mpris/MediaPlayer2'"
+method return time=1746439584.456910 sender=org.freedesktop.DBus -> destination=:1.45 serial=4294967295 reply_serial=118
+method call time=1746439584.456912 sender=:1.45 -> destination=org.freedesktop.DBus serial=119 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=StartServiceByName
+   string "org.mpris.MediaPlayer2.spotify"
+   uint32 0
+error time=1746439584.456918 sender=org.freedesktop.DBus -> destination=:1.45 error_name=org.freedesktop.DBus.Error.ServiceUnknown reply_serial=119
+   string "The name is not activatable"
+method call time=1746439584.456922 sender=:1.46 -> destination=org.freedesktop.DBus serial=115 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.mpris.MediaPlayer2.spotify'"
+method return time=1746439584.456934 sender=org.freedesktop.DBus -> destination=:1.46 serial=4294967295 reply_serial=115
+method call time=1746439584.456938 sender=:1.46 -> destination=org.freedesktop.DBus serial=116 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.mpris.MediaPlayer2.spotify"
+method return time=1746439584.456942 sender=org.freedesktop.DBus -> destination=:1.46 serial=4294967295 reply_serial=116
+   string ":1.175"
+method call time=1746439584.456946 sender=:1.46 -> destination=org.freedesktop.DBus serial=117 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',path='/org/mpris/MediaPlayer2',arg0='org.mpris.MediaPlayer2.Player'"
+method return time=1746439584.456951 sender=org.freedesktop.DBus -> destination=:1.46 serial=4294967295 reply_serial=117
+method call time=1746439584.456954 sender=:1.46 -> destination=org.freedesktop.DBus serial=118 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.mpris.MediaPlayer2.Player',path='/org/mpris/MediaPlayer2'"
+method return time=1746439584.456958 sender=org.freedesktop.DBus -> destination=:1.46 serial=4294967295 reply_serial=118
+method call time=1746439584.456961 sender=:1.46 -> destination=org.freedesktop.DBus serial=119 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=StartServiceByName
+   string "org.mpris.MediaPlayer2.spotify"
+   uint32 0
+error time=1746439584.456966 sender=org.freedesktop.DBus -> destination=:1.46 error_name=org.freedesktop.DBus.Error.ServiceUnknown reply_serial=119
+   string "The name is not activatable"
+method call time=1746439584.456970 sender=:1.44 -> destination=org.freedesktop.DBus serial=115 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.mpris.MediaPlayer2.spotify'"
+method return time=1746439584.456973 sender=org.freedesktop.DBus -> destination=:1.44 serial=4294967295 reply_serial=115
+method call time=1746439584.456975 sender=:1.44 -> destination=org.freedesktop.DBus serial=116 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.mpris.MediaPlayer2.spotify"
+method return time=1746439584.456979 sender=org.freedesktop.DBus -> destination=:1.44 serial=4294967295 reply_serial=116
+   string ":1.175"
+method call time=1746439584.456982 sender=:1.44 -> destination=org.freedesktop.DBus serial=117 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',path='/org/mpris/MediaPlayer2',arg0='org.mpris.MediaPlayer2.Player'"
+method return time=1746439584.456985 sender=org.freedesktop.DBus -> destination=:1.44 serial=4294967295 reply_serial=117
+method call time=1746439584.456987 sender=:1.44 -> destination=org.freedesktop.DBus serial=118 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.mpris.MediaPlayer2.Player',path='/org/mpris/MediaPlayer2'"
+method return time=1746439584.457073 sender=org.freedesktop.DBus -> destination=:1.44 serial=4294967295 reply_serial=118
+method call time=1746439584.457077 sender=:1.44 -> destination=org.freedesktop.DBus serial=119 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=StartServiceByName
+   string "org.mpris.MediaPlayer2.spotify"
+   uint32 0
+error time=1746439584.457082 sender=org.freedesktop.DBus -> destination=:1.44 error_name=org.freedesktop.DBus.Error.ServiceUnknown reply_serial=119
+   string "The name is not activatable"
+method call time=1746439584.457086 sender=:1.43 -> destination=org.freedesktop.DBus serial=120 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.mpris.MediaPlayer2.spotify"
+method return time=1746439584.457094 sender=org.freedesktop.DBus -> destination=:1.43 serial=4294967295 reply_serial=120
+   string ":1.175"
+method call time=1746439584.457097 sender=:1.47 -> destination=org.freedesktop.DBus serial=120 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.mpris.MediaPlayer2.spotify"
+method return time=1746439584.457100 sender=org.freedesktop.DBus -> destination=:1.47 serial=4294967295 reply_serial=120
+   string ":1.175"
+method call time=1746439584.457104 sender=:1.45 -> destination=org.freedesktop.DBus serial=120 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.mpris.MediaPlayer2.spotify"
+method return time=1746439584.457107 sender=org.freedesktop.DBus -> destination=:1.45 serial=4294967295 reply_serial=120
+   string ":1.175"
+method call time=1746439584.457110 sender=:1.46 -> destination=org.freedesktop.DBus serial=120 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.mpris.MediaPlayer2.spotify"
+method return time=1746439584.457114 sender=org.freedesktop.DBus -> destination=:1.46 serial=4294967295 reply_serial=120
+   string ":1.175"
+method call time=1746439584.457117 sender=:1.47 -> destination=:1.175 serial=121 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=GetAll
+   string "org.mpris.MediaPlayer2.Player"
+method call time=1746439584.457120 sender=:1.43 -> destination=:1.175 serial=121 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=GetAll
+   string "org.mpris.MediaPlayer2.Player"
+method call time=1746439584.457123 sender=:1.44 -> destination=org.freedesktop.DBus serial=120 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.mpris.MediaPlayer2.spotify"
+method return time=1746439584.457127 sender=org.freedesktop.DBus -> destination=:1.44 serial=4294967295 reply_serial=120
+   string ":1.175"
+method call time=1746439584.457130 sender=:1.45 -> destination=:1.175 serial=121 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=GetAll
+   string "org.mpris.MediaPlayer2.Player"
+method call time=1746439584.457146 sender=:1.46 -> destination=:1.175 serial=121 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=GetAll
+   string "org.mpris.MediaPlayer2.Player"
+method call time=1746439584.457149 sender=:1.44 -> destination=:1.175 serial=121 path=/org/mpris/MediaPlayer2; interface=org.freedesktop.DBus.Properties; member=GetAll
+   string "org.mpris.MediaPlayer2.Player"
+method return time=1746439584.459213 sender=:1.175 -> destination=:1.47 serial=31 reply_serial=121
+   array [
+      dict entry(
+         string "PlaybackStatus"
+         variant             string "Stopped"
+      )
+      dict entry(
+         string "LoopStatus"
+         variant             string "None"
+      )
+      dict entry(
+         string "Rate"
+         variant             double 1
+      )
+      dict entry(
+         string "Shuffle"
+         variant             boolean false
+      )
+      dict entry(
+         string "Metadata"
+         variant             array [
+               dict entry(
+                  string "mpris:trackid"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "mpris:length"
+                  variant                      uint64 0
+               )
+               dict entry(
+                  string "mpris:artUrl"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:album"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:albumArtist"
+                  variant                      array [
+                     ]
+               )
+               dict entry(
+                  string "xesam:artist"
+                  variant                      array [
+                     ]
+               )
+               dict entry(
+                  string "xesam:autoRating"
+                  variant                      double 0
+               )
+               dict entry(
+                  string "xesam:discNumber"
+                  variant                      int32 0
+               )
+               dict entry(
+                  string "xesam:title"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:trackNumber"
+                  variant                      int32 0
+               )
+               dict entry(
+                  string "xesam:url"
+                  variant                      string ""
+               )
+            ]
+      )
+      dict entry(
+         string "Volume"
+         variant             double 0
+      )
+      dict entry(
+         string "Position"
+         variant             int64 0
+      )
+      dict entry(
+         string "MinimumRate"
+         variant             double 1
+      )
+      dict entry(
+         string "MaximumRate"
+         variant             double 1
+      )
+      dict entry(
+         string "CanGoNext"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanGoPrevious"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanPlay"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanPause"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanSeek"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanControl"
+         variant             boolean true
+      )
+   ]
+method return time=1746439584.459462 sender=:1.175 -> destination=:1.43 serial=32 reply_serial=121
+   array [
+      dict entry(
+         string "PlaybackStatus"
+         variant             string "Stopped"
+      )
+      dict entry(
+         string "LoopStatus"
+         variant             string "None"
+      )
+      dict entry(
+         string "Rate"
+         variant             double 1
+      )
+      dict entry(
+         string "Shuffle"
+         variant             boolean false
+      )
+      dict entry(
+         string "Metadata"
+         variant             array [
+               dict entry(
+                  string "mpris:trackid"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "mpris:length"
+                  variant                      uint64 0
+               )
+               dict entry(
+                  string "mpris:artUrl"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:album"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:albumArtist"
+                  variant                      array [
+                     ]
+               )
+               dict entry(
+                  string "xesam:artist"
+                  variant                      array [
+                     ]
+               )
+               dict entry(
+                  string "xesam:autoRating"
+                  variant                      double 0
+               )
+               dict entry(
+                  string "xesam:discNumber"
+                  variant                      int32 0
+               )
+               dict entry(
+                  string "xesam:title"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:trackNumber"
+                  variant                      int32 0
+               )
+               dict entry(
+                  string "xesam:url"
+                  variant                      string ""
+               )
+            ]
+      )
+      dict entry(
+         string "Volume"
+         variant             double 0
+      )
+      dict entry(
+         string "Position"
+         variant             int64 0
+      )
+      dict entry(
+         string "MinimumRate"
+         variant             double 1
+      )
+      dict entry(
+         string "MaximumRate"
+         variant             double 1
+      )
+      dict entry(
+         string "CanGoNext"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanGoPrevious"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanPlay"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanPause"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanSeek"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanControl"
+         variant             boolean true
+      )
+   ]
+method return time=1746439584.459620 sender=:1.175 -> destination=:1.45 serial=33 reply_serial=121
+   array [
+      dict entry(
+         string "PlaybackStatus"
+         variant             string "Stopped"
+      )
+      dict entry(
+         string "LoopStatus"
+         variant             string "None"
+      )
+      dict entry(
+         string "Rate"
+         variant             double 1
+      )
+      dict entry(
+         string "Shuffle"
+         variant             boolean false
+      )
+      dict entry(
+         string "Metadata"
+         variant             array [
+               dict entry(
+                  string "mpris:trackid"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "mpris:length"
+                  variant                      uint64 0
+               )
+               dict entry(
+                  string "mpris:artUrl"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:album"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:albumArtist"
+                  variant                      array [
+                     ]
+               )
+               dict entry(
+                  string "xesam:artist"
+                  variant                      array [
+                     ]
+               )
+               dict entry(
+                  string "xesam:autoRating"
+                  variant                      double 0
+               )
+               dict entry(
+                  string "xesam:discNumber"
+                  variant                      int32 0
+               )
+               dict entry(
+                  string "xesam:title"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:trackNumber"
+                  variant                      int32 0
+               )
+               dict entry(
+                  string "xesam:url"
+                  variant                      string ""
+               )
+            ]
+      )
+      dict entry(
+         string "Volume"
+         variant             double 0
+      )
+      dict entry(
+         string "Position"
+         variant             int64 0
+      )
+      dict entry(
+         string "MinimumRate"
+         variant             double 1
+      )
+      dict entry(
+         string "MaximumRate"
+         variant             double 1
+      )
+      dict entry(
+         string "CanGoNext"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanGoPrevious"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanPlay"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanPause"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanSeek"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanControl"
+         variant             boolean true
+      )
+   ]
+method return time=1746439584.459812 sender=:1.175 -> destination=:1.46 serial=34 reply_serial=121
+   array [
+      dict entry(
+         string "PlaybackStatus"
+         variant             string "Stopped"
+      )
+      dict entry(
+         string "LoopStatus"
+         variant             string "None"
+      )
+      dict entry(
+         string "Rate"
+         variant             double 1
+      )
+      dict entry(
+         string "Shuffle"
+         variant             boolean false
+      )
+      dict entry(
+         string "Metadata"
+         variant             array [
+               dict entry(
+                  string "mpris:trackid"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "mpris:length"
+                  variant                      uint64 0
+               )
+               dict entry(
+                  string "mpris:artUrl"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:album"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:albumArtist"
+                  variant                      array [
+                     ]
+               )
+               dict entry(
+                  string "xesam:artist"
+                  variant                      array [
+                     ]
+               )
+               dict entry(
+                  string "xesam:autoRating"
+                  variant                      double 0
+               )
+               dict entry(
+                  string "xesam:discNumber"
+                  variant                      int32 0
+               )
+               dict entry(
+                  string "xesam:title"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:trackNumber"
+                  variant                      int32 0
+               )
+               dict entry(
+                  string "xesam:url"
+                  variant                      string ""
+               )
+            ]
+      )
+      dict entry(
+         string "Volume"
+         variant             double 0
+      )
+      dict entry(
+         string "Position"
+         variant             int64 0
+      )
+      dict entry(
+         string "MinimumRate"
+         variant             double 1
+      )
+      dict entry(
+         string "MaximumRate"
+         variant             double 1
+      )
+      dict entry(
+         string "CanGoNext"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanGoPrevious"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanPlay"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanPause"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanSeek"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanControl"
+         variant             boolean true
+      )
+   ]
+method return time=1746439584.459955 sender=:1.175 -> destination=:1.44 serial=35 reply_serial=121
+   array [
+      dict entry(
+         string "PlaybackStatus"
+         variant             string "Stopped"
+      )
+      dict entry(
+         string "LoopStatus"
+         variant             string "None"
+      )
+      dict entry(
+         string "Rate"
+         variant             double 1
+      )
+      dict entry(
+         string "Shuffle"
+         variant             boolean false
+      )
+      dict entry(
+         string "Metadata"
+         variant             array [
+               dict entry(
+                  string "mpris:trackid"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "mpris:length"
+                  variant                      uint64 0
+               )
+               dict entry(
+                  string "mpris:artUrl"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:album"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:albumArtist"
+                  variant                      array [
+                     ]
+               )
+               dict entry(
+                  string "xesam:artist"
+                  variant                      array [
+                     ]
+               )
+               dict entry(
+                  string "xesam:autoRating"
+                  variant                      double 0
+               )
+               dict entry(
+                  string "xesam:discNumber"
+                  variant                      int32 0
+               )
+               dict entry(
+                  string "xesam:title"
+                  variant                      string ""
+               )
+               dict entry(
+                  string "xesam:trackNumber"
+                  variant                      int32 0
+               )
+               dict entry(
+                  string "xesam:url"
+                  variant                      string ""
+               )
+            ]
+      )
+      dict entry(
+         string "Volume"
+         variant             double 0
+      )
+      dict entry(
+         string "Position"
+         variant             int64 0
+      )
+      dict entry(
+         string "MinimumRate"
+         variant             double 1
+      )
+      dict entry(
+         string "MaximumRate"
+         variant             double 1
+      )
+      dict entry(
+         string "CanGoNext"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanGoPrevious"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanPlay"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanPause"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanSeek"
+         variant             boolean false
+      )
+      dict entry(
+         string "CanControl"
+         variant             boolean true
+      )
+   ]
+signal time=1746439584.460095 sender=:1.175 -> destination=(null destination) serial=36 path=/org/ayatana/NotificationItem/spotify_client/Menu; interface=com.canonical.dbusmenu; member=LayoutUpdated
+   uint32 2
+   int32 0
+method call time=1746439584.461763 sender=:1.177 -> destination=org.freedesktop.DBus serial=4 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',sender='org.freedesktop.DBus',arg0='org.freedesktop.portal.Desktop'"
+method return time=1746439584.461790 sender=org.freedesktop.DBus -> destination=:1.177 serial=4294967295 reply_serial=4
+method call time=1746439584.461810 sender=:1.177 -> destination=org.freedesktop.DBus serial=5 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.freedesktop.portal.Desktop"
+method return time=1746439584.461814 sender=org.freedesktop.DBus -> destination=:1.177 serial=4294967295 reply_serial=5
+   string ":1.25"
+method call time=1746439584.461843 sender=:1.177 -> destination=org.freedesktop.DBus serial=6 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal', sender='org.freedesktop.portal.Desktop', interface='org.freedesktop.portal.Request', path='/org/freedesktop/portal/desktop/request/1_177/cr_secret_portal_response_token'"
+method return time=1746439584.461848 sender=org.freedesktop.DBus -> destination=:1.177 serial=4294967295 reply_serial=6
+method call time=1746439584.461906 sender=:1.177 -> destination=org.freedesktop.portal.Desktop serial=7 path=/org/freedesktop/portal/desktop; interface=org.freedesktop.portal.Secret; member=RetrieveSecret
+   file descriptor
+         inode: 1366965
+         type: fifo
+   array [
+      dict entry(
+         string "handle_token"
+         variant             string "cr_secret_portal_response_token"
+      )
+   ]
+error time=1746439584.462229 sender=:1.25 -> destination=:1.177 error_name=org.freedesktop.DBus.Error.UnknownMethod reply_serial=7
+   string "No such interface “org.freedesktop.portal.Secret” on object at path /org/freedesktop/portal/desktop"
+method call time=1746439584.466122 sender=:1.179 -> destination=org.freedesktop.DBus serial=1 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=Hello
+method return time=1746439584.466163 sender=org.freedesktop.DBus -> destination=:1.179 serial=4294967295 reply_serial=1
+   string ":1.179"
+signal time=1746439584.466175 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string ":1.179"
+   string ""
+   string ":1.179"
+signal time=1746439584.466192 sender=org.freedesktop.DBus -> destination=:1.179 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameAcquired
+   string ":1.179"
+method call time=1746439584.466455 sender=:1.179 -> destination=org.freedesktop.DBus serial=2 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal', path='/org/freedesktop/DBus/Local',interface='org.freedesktop.DBus.Local', member='Disconnected'"
+method return time=1746439584.466479 sender=org.freedesktop.DBus -> destination=:1.179 serial=4294967295 reply_serial=2
+method call time=1746439584.466584 sender=:1.179 -> destination=org.freedesktop.DBus serial=3 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameHasOwner
+   string "org.gnome.Mutter.IdleMonitor"
+method return time=1746439584.466590 sender=org.freedesktop.DBus -> destination=:1.179 serial=4294967295 reply_serial=3
+   boolean false
+method call time=1746439584.466595 sender=:1.180 -> destination=org.freedesktop.DBus serial=1 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=Hello
+method return time=1746439584.466597 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 reply_serial=1
+   string ":1.180"
+signal time=1746439584.466601 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string ":1.180"
+   string ""
+   string ":1.180"
+signal time=1746439584.466609 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameAcquired
+   string ":1.180"
+method call time=1746439584.466903 sender=:1.180 -> destination=org.freedesktop.DBus serial=2 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal', path='/org/freedesktop/DBus/Local',interface='org.freedesktop.DBus.Local', member='Disconnected'"
+method return time=1746439584.466915 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 reply_serial=2
+method call time=1746439584.466933 sender=:1.180 -> destination=org.freedesktop.DBus serial=3 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameHasOwner
+   string "org.freedesktop.ScreenSaver"
+method return time=1746439584.466938 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 reply_serial=3
+   boolean true
+method call time=1746439584.489922 sender=:1.180 -> destination=org.freedesktop.DBus serial=4 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',sender='org.freedesktop.DBus',arg0='org.freedesktop.ScreenSaver'"
+method return time=1746439584.489961 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 reply_serial=4
+method call time=1746439584.489975 sender=:1.180 -> destination=org.freedesktop.DBus serial=5 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=GetNameOwner
+   string "org.freedesktop.ScreenSaver"
+method return time=1746439584.489978 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 reply_serial=5
+   string ":1.10"
+method call time=1746439584.490048 sender=:1.180 -> destination=org.freedesktop.DBus serial=6 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=AddMatch
+   string "type='signal', sender='org.freedesktop.ScreenSaver', interface='org.freedesktop.ScreenSaver', path='/org/freedesktop/ScreenSaver'"
+method return time=1746439584.490055 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 reply_serial=6
+method call time=1746439584.499762 sender=:1.180 -> destination=org.freedesktop.ScreenSaver serial=7 path=/org/freedesktop/ScreenSaver; interface=org.freedesktop.ScreenSaver; member=GetActive
+error time=1746439584.499833 sender=:1.10 -> destination=:1.180 error_name=org.freedesktop.DBus.Error.UnknownMethod reply_serial=7
+   string "Unknown method GetActive or interface org.freedesktop.ScreenSaver."
+method call time=1746439584.502689 sender=:1.180 -> destination=org.freedesktop.DBus serial=8 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal', sender='org.freedesktop.ScreenSaver', interface='org.freedesktop.ScreenSaver', path='/org/freedesktop/ScreenSaver'"
+method return time=1746439584.502725 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 reply_serial=8
+method call time=1746439584.502727 sender=:1.180 -> destination=org.freedesktop.DBus serial=9 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',sender='org.freedesktop.DBus',arg0='org.freedesktop.ScreenSaver'"
+method return time=1746439584.502732 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 reply_serial=9
+method call time=1746439584.502786 sender=:1.180 -> destination=org.freedesktop.DBus serial=10 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameHasOwner
+   string "org.cinnamon.ScreenSaver"
+method return time=1746439584.502792 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 reply_serial=10
+   boolean false
+method call time=1746439584.504247 sender=:1.180 -> destination=org.freedesktop.DBus serial=11 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameHasOwner
+   string "org.gnome.ScreenSaver"
+method return time=1746439584.504268 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 reply_serial=11
+   boolean false
+method call time=1746439584.504928 sender=:1.180 -> destination=org.freedesktop.DBus serial=12 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameHasOwner
+   string "org.mate.ScreenSaver"
+method return time=1746439584.504956 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 reply_serial=12
+   boolean false
+method call time=1746439584.506428 sender=:1.180 -> destination=org.freedesktop.DBus serial=13 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameHasOwner
+   string "org.xfce.ScreenSaver"
+method return time=1746439584.506458 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 reply_serial=13
+   boolean false
+method call time=1746439590.706702 sender=:1.178 -> destination=org.freedesktop.DBus serial=11 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal', sender='org.freedesktop.Notifications', interface='org.freedesktop.Notifications', path='/org/freedesktop/Notifications'"
+method return time=1746439590.706725 sender=org.freedesktop.DBus -> destination=:1.178 serial=4294967295 reply_serial=11
+method call time=1746439590.706757 sender=:1.178 -> destination=org.freedesktop.DBus serial=12 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',sender='org.freedesktop.DBus',arg0='org.freedesktop.Notifications'"
+method return time=1746439590.706763 sender=org.freedesktop.DBus -> destination=:1.178 serial=4294967295 reply_serial=12
+method call time=1746439590.706851 sender=:1.178 -> destination=org.freedesktop.DBus serial=13 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal', path='/org/freedesktop/DBus/Local',interface='org.freedesktop.DBus.Local', member='Disconnected'"
+method return time=1746439590.706875 sender=org.freedesktop.DBus -> destination=:1.178 serial=4294967295 reply_serial=13
+signal time=1746439590.706944 sender=org.freedesktop.DBus -> destination=:1.178 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameLost
+   string ":1.178"
+signal time=1746439590.706949 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string ":1.178"
+   string ":1.178"
+   string ""
+method call time=1746439590.707471 sender=:1.175 -> destination=org.freedesktop.DBus serial=37 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.gnome.SettingsDaemon.MediaKeys',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',path='/org/gnome/SettingsDaemon/MediaKeys',arg0='org.gnome.SettingsDaemon.MediaKeys'"
+method return time=1746439590.707518 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=37
+method call time=1746439590.707524 sender=:1.175 -> destination=org.freedesktop.DBus serial=38 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.gnome.SettingsDaemon.MediaKeys',interface='org.gnome.SettingsDaemon.MediaKeys',path='/org/gnome/SettingsDaemon/MediaKeys'"
+method return time=1746439590.707533 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=38
+method call time=1746439590.707537 sender=:1.175 -> destination=org.freedesktop.DBus serial=39 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.gnome.SettingsDaemon.MediaKeys'"
+method return time=1746439590.707545 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 reply_serial=39
+signal time=1746439590.803161 sender=org.freedesktop.DBus -> destination=:1.179 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameLost
+   string ":1.179"
+signal time=1746439590.803209 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string ":1.179"
+   string ":1.179"
+   string ""
+signal time=1746439590.803227 sender=org.freedesktop.DBus -> destination=:1.180 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameLost
+   string ":1.180"
+signal time=1746439590.803237 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string ":1.180"
+   string ":1.180"
+   string ""
+signal time=1746439590.803253 sender=org.freedesktop.DBus -> destination=:1.177 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameLost
+   string ":1.177"
+signal time=1746439590.803263 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string ":1.177"
+   string ":1.177"
+   string ""
+signal time=1746439590.807944 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameLost
+   string "org.mpris.MediaPlayer2.spotify"
+signal time=1746439590.808000 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string "org.mpris.MediaPlayer2.spotify"
+   string ":1.175"
+   string ""
+signal time=1746439590.808051 sender=org.freedesktop.DBus -> destination=:1.175 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameLost
+   string ":1.175"
+signal time=1746439590.808065 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string ":1.175"
+   string ":1.175"
+   string ""
+signal time=1746439590.808088 sender=org.freedesktop.DBus -> destination=:1.176 serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameLost
+   string ":1.176"
+signal time=1746439590.808101 sender=org.freedesktop.DBus -> destination=(null destination) serial=4294967295 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=NameOwnerChanged
+   string ":1.176"
+   string ":1.176"
+   string ""
+method call time=1746439590.808494 sender=:1.47 -> destination=org.freedesktop.DBus serial=122 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',path='/org/mpris/MediaPlayer2',arg0='org.mpris.MediaPlayer2.Player'"
+method return time=1746439590.808515 sender=org.freedesktop.DBus -> destination=:1.47 serial=4294967295 reply_serial=122
+method call time=1746439590.808517 sender=:1.47 -> destination=org.freedesktop.DBus serial=123 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.mpris.MediaPlayer2.Player',path='/org/mpris/MediaPlayer2'"
+method return time=1746439590.808521 sender=org.freedesktop.DBus -> destination=:1.47 serial=4294967295 reply_serial=123
+method call time=1746439590.808763 sender=:1.45 -> destination=org.freedesktop.DBus serial=122 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',path='/org/mpris/MediaPlayer2',arg0='org.mpris.MediaPlayer2.Player'"
+method return time=1746439590.808773 sender=org.freedesktop.DBus -> destination=:1.45 serial=4294967295 reply_serial=122
+method call time=1746439590.808776 sender=:1.45 -> destination=org.freedesktop.DBus serial=123 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.mpris.MediaPlayer2.Player',path='/org/mpris/MediaPlayer2'"
+method return time=1746439590.808780 sender=org.freedesktop.DBus -> destination=:1.45 serial=4294967295 reply_serial=123
+method call time=1746439590.808782 sender=:1.45 -> destination=org.freedesktop.DBus serial=124 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.mpris.MediaPlayer2.spotify'"
+method return time=1746439590.808787 sender=org.freedesktop.DBus -> destination=:1.45 serial=4294967295 reply_serial=124
+method call time=1746439590.808789 sender=:1.46 -> destination=org.freedesktop.DBus serial=122 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',path='/org/mpris/MediaPlayer2',arg0='org.mpris.MediaPlayer2.Player'"
+method return time=1746439590.808794 sender=org.freedesktop.DBus -> destination=:1.46 serial=4294967295 reply_serial=122
+method call time=1746439590.808796 sender=:1.46 -> destination=org.freedesktop.DBus serial=123 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.mpris.MediaPlayer2.Player',path='/org/mpris/MediaPlayer2'"
+method return time=1746439590.808800 sender=org.freedesktop.DBus -> destination=:1.46 serial=4294967295 reply_serial=123
+method call time=1746439590.808814 sender=:1.46 -> destination=org.freedesktop.DBus serial=124 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.mpris.MediaPlayer2.spotify'"
+method return time=1746439590.808818 sender=org.freedesktop.DBus -> destination=:1.46 serial=4294967295 reply_serial=124
+method call time=1746439590.808821 sender=:1.44 -> destination=org.freedesktop.DBus serial=122 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',path='/org/mpris/MediaPlayer2',arg0='org.mpris.MediaPlayer2.Player'"
+method return time=1746439590.808825 sender=org.freedesktop.DBus -> destination=:1.44 serial=4294967295 reply_serial=122
+method call time=1746439590.808827 sender=:1.44 -> destination=org.freedesktop.DBus serial=123 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.mpris.MediaPlayer2.Player',path='/org/mpris/MediaPlayer2'"
+method return time=1746439590.808831 sender=org.freedesktop.DBus -> destination=:1.44 serial=4294967295 reply_serial=123
+method call time=1746439590.808886 sender=:1.44 -> destination=org.freedesktop.DBus serial=124 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.mpris.MediaPlayer2.spotify'"
+method return time=1746439590.808891 sender=org.freedesktop.DBus -> destination=:1.44 serial=4294967295 reply_serial=124
+method call time=1746439590.808893 sender=:1.47 -> destination=org.freedesktop.DBus serial=124 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.mpris.MediaPlayer2.spotify'"
+method return time=1746439590.808897 sender=org.freedesktop.DBus -> destination=:1.47 serial=4294967295 reply_serial=124
+method call time=1746439590.808900 sender=:1.43 -> destination=org.freedesktop.DBus serial=122 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.freedesktop.DBus.Properties',member='PropertiesChanged',path='/org/mpris/MediaPlayer2',arg0='org.mpris.MediaPlayer2.Player'"
+method return time=1746439590.808904 sender=org.freedesktop.DBus -> destination=:1.43 serial=4294967295 reply_serial=122
+method call time=1746439590.808906 sender=:1.43 -> destination=org.freedesktop.DBus serial=123 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.mpris.MediaPlayer2.spotify',interface='org.mpris.MediaPlayer2.Player',path='/org/mpris/MediaPlayer2'"
+method return time=1746439590.808910 sender=org.freedesktop.DBus -> destination=:1.43 serial=4294967295 reply_serial=123
+method call time=1746439590.808913 sender=:1.43 -> destination=org.freedesktop.DBus serial=124 path=/org/freedesktop/DBus; interface=org.freedesktop.DBus; member=RemoveMatch
+   string "type='signal',sender='org.freedesktop.DBus',interface='org.freedesktop.DBus',member='NameOwnerChanged',path='/org/freedesktop/DBus',arg0='org.mpris.MediaPlayer2.spotify'"
+method return time=1746439590.808917 sender=org.freedesktop.DBus -> destination=:1.43 serial=4294967295 reply_serial=124
