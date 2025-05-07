@@ -1,6 +1,14 @@
-use std::{error::Error, future::pending};
+mod media;
 
-use zbus::{connection, interface, Connection};
+use std::{
+    error::Error, time::Duration,
+};
+
+use media::properties::Properties;
+use tokio::time::interval;
+use zbus::{
+    Connection, connection as conn, interface,
+};
 
 struct BarScripts {}
 
@@ -17,26 +25,49 @@ async fn get_mpris_bus_names(connection: &Connection) -> Result<Vec<String>, Box
             &(),
         )
         .await?;
-    let all_bus_names = reply.body().deserialize::<Vec<String>>()?;
+    let all_bus_names: Vec<String> = reply.body().deserialize()?;
     Ok(all_bus_names
         .into_iter()
         .filter(|bus_name| bus_name.starts_with("org.mpris.MediaPlayer2"))
         .collect::<Vec<_>>())
 }
 
+async fn get_mpris_all_properties(
+    connection: &Connection,
+    bus_name: &str,
+) -> Result<(), Box<dyn Error>> {
+    let reply = connection
+        .call_method(
+            Some(bus_name),
+            "/org/mpris/MediaPlayer2",
+            Some("org.freedesktop.DBus.Properties"),
+            "GetAll",
+            &("org.mpris.MediaPlayer2.Player"),
+        )
+        .await?;
+
+    let reply_body = reply.body();
+    let properties: Properties = reply_body.deserialize()?;
+    dbg!(properties);
+    Ok(())
+}
+
 #[tokio::main(flavor = "current_thread")]
 async fn main() -> Result<(), Box<dyn Error>> {
     let bar_scripts = BarScripts {};
-    let connection = connection::Builder::session()?
+    let connection = conn::Builder::session()?
         .name("org.user.BarScripts")?
         .serve_at("/org/user/BarScripts", bar_scripts)?
         .build()
         .await?;
 
-    eprintln!("{:?}", get_mpris_bus_names(&connection).await?);
-
-    // Do other things or go to wait forever
-    pending::<()>().await;
-
-    Ok(())
+    let mut interval = interval(Duration::from_secs(1));
+    loop {
+        interval.tick().await;
+        let bus_names = get_mpris_bus_names(&connection).await?;
+        println!("{:?}", bus_names);
+        for bus_name in bus_names {
+            get_mpris_all_properties(&connection, &bus_name).await?;
+        }
+    }
 }
