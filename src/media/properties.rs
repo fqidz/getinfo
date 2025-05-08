@@ -1,7 +1,7 @@
 use super::try_as_value::{self, try_as_optional};
 
 use serde::Deserialize;
-use zbus::zvariant::{as_value::{self, optional}, Type};
+use zbus::zvariant::{as_value::{self, optional}, OwnedValue, Type};
 
 /// https://www.freedesktop.org/wiki/Specifications/mpris-spec/metadata/
 /// https://specifications.freedesktop.org/mpris-spec/latest/Track_List_Interface.html#Mapping:Metadata_Map
@@ -196,15 +196,28 @@ impl Metadata {
 
 #[derive(Type, Deserialize, Debug)]
 #[zvariant(signature = "s")]
-enum PlaybackStatus {
+pub enum PlaybackStatus {
     Playing,
     Paused,
     Stopped,
 }
 
+impl TryFrom<OwnedValue> for PlaybackStatus {
+    type Error = zbus::zvariant::Error;
+
+    fn try_from(value: OwnedValue) -> Result<Self, Self::Error> {
+        match String::try_from(value)?.as_str() {
+            "Playing" => Ok(Self::Playing),
+            "Paused" => Ok(Self::Paused),
+            "Stopped" => Ok(Self::Stopped),
+            _ => { Err(zbus::zvariant::Error::IncorrectType) }
+        }
+    }
+}
+
 #[derive(Type, Deserialize, Debug)]
 #[zvariant(signature = "s")]
-enum LoopStatus {
+pub enum LoopStatus {
     None,
     Track,
     Playlist,
@@ -215,47 +228,47 @@ enum LoopStatus {
 #[serde(rename_all(deserialize = "PascalCase"))]
 pub struct Properties {
     #[serde(with = "as_value")]
-    playback_status: PlaybackStatus,
+    pub playback_status: PlaybackStatus,
 
     #[serde(with = "optional", skip_serializing_if = "Option::is_none", default)]
-    loop_status: Option<LoopStatus>,
+    pub loop_status: Option<LoopStatus>,
 
     #[serde(with = "optional", skip_serializing_if = "Option::is_none", default)]
-    rate: Option<f64>,
+    pub rate: Option<f64>,
 
     #[serde(with = "optional", skip_serializing_if = "Option::is_none", default)]
-    shuffle: Option<bool>,
+    pub shuffle: Option<bool>,
 
     #[serde(with = "as_value")]
-    metadata: Metadata,
+    pub metadata: Metadata,
 
     #[serde(with = "optional", skip_serializing_if = "Option::is_none", default)]
-    volume: Option<f64>,
+    pub volume: Option<f64>,
 
     #[serde(with = "as_value")]
-    position: i64,
+    pub position: i64,
 
     #[serde(with = "optional", skip_serializing_if = "Option::is_none", default)]
-    minimum_rate: Option<f64>,
+    pub minimum_rate: Option<f64>,
 
     #[serde(with = "optional", skip_serializing_if = "Option::is_none", default)]
-    maximum_rate: Option<f64>,
+    pub maximum_rate: Option<f64>,
 
     #[serde(with = "as_value")]
-    can_go_next: bool,
+    pub can_go_next: bool,
 
     #[serde(with = "as_value")]
-    can_go_previous: bool,
+    pub can_go_previous: bool,
 
     #[serde(with = "as_value")]
-    can_play: bool,
+    pub can_play: bool,
 
     #[serde(with = "as_value")]
-    can_pause: bool,
+    pub can_pause: bool,
 
     #[serde(with = "as_value")]
-    can_seek: bool,
+    pub can_seek: bool,
 
     #[serde(with = "as_value")]
-    can_control: bool,
+    pub can_control: bool,
 }
