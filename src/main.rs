@@ -1,10 +1,11 @@
 mod media;
 
-use std::{collections::{hash_map::Entry, HashMap}, error::Error, time::Duration};
+use std::{cell::RefCell, error::Error, future::pending, sync::Arc, time::Duration};
 
+use dashmap::{DashMap, Entry};
 use futures_lite::StreamExt;
 use media::properties::{PlaybackStatus, Properties};
-use tokio::time::{MissedTickBehavior, interval};
+use tokio::{sync::Mutex, time::{interval, MissedTickBehavior}};
 use zbus::{
     fdo::{DBusProxy, PropertiesProxy}, zvariant::{OwnedValue, Value}, Connection, Proxy
 };
@@ -95,7 +96,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     .await?;
     let proxy_dbus = DBusProxy::new(&connection).await?;
     let mut properties_changed_signal = proxy_properties.receive_properties_changed().await?;
-    let mut name_owner_changed = proxy_dbus.receive_name_owner_changed().await?;
+    let name_owner_changed = Arc::new(Mutex::new(proxy_dbus.receive_name_owner_changed().await?));
 
     let mut interval = interval(Duration::from_secs(1));
     interval.set_missed_tick_behavior(MissedTickBehavior::Skip);
@@ -103,7 +104,7 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // interval.tick().await;
 
     let bus_names = get_mpris_bus_names(&connection).await?;
-    let mut bus_properties = HashMap::new();
+    let bus_properties = Arc::new(DashMap::new());
     for bus_name in bus_names {
         bus_properties.insert(
             bus_name.clone(),
@@ -114,24 +115,36 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1950461
     //
     // https://phabricator.services.mozilla.com/D242633
-    loop {
-        if let Some(name) = name_owner_changed.next().await {
-            let body = name.message().body();
-            let message: (String, String, String) = body.deserialize()?;
-            let bus_name = message.0;
-            if bus_name.starts_with("org.mpris.MediaPlayer2") {
-                match bus_properties.entry(bus_name.clone()) {
-                    Entry::Occupied(occupied_entry) => {
-                        occupied_entry.remove();
-                    },
-                    Entry::Vacant(vacant_entry) => {
-                        let property = get_mpris_all_properties(&connection, &bus_name).await?;
-                        vacant_entry.insert(property);
-                    },
+    // loop {
+    let name_owner_changed_handle = tokio::spawn({
+        let name_owner_changed_cloned = name_owner_changed.clone();
+        let bus_properties_cloned = bus_properties.clone();
+        let conn_test = Connection::session().await.unwrap();
+        async move {
+            loop {
+                if let Some(name) = name_owner_changed_cloned.lock().await.next().await {
+                    let body = name.message().body();
+                    let message: (String, String, String) = body.deserialize().unwrap();
+                    let bus_name = message.0;
+                    if bus_name.starts_with("org.mpris.MediaPlayer2") {
+                        match bus_properties_cloned.entry(bus_name.clone()) {
+                            Entry::Occupied(occupied_entry) => {
+                                occupied_entry.remove();
+                            },
+                            Entry::Vacant(vacant_entry) => {
+                                let property = get_mpris_all_properties(&conn_test, &bus_name).await.unwrap();
+                                vacant_entry.insert(property);
+                            },
+                        }
+                        dbg!(&bus_properties);
+                    }
                 }
-                dbg!(&bus_properties);
             }
         }
+    });
+
+    pending::<()>().await;
+    Ok(())
         // interval.tick().await;
         // for bus_name in &bus_names {
         //     let property = properties.get_mut(bus_name).unwrap();
@@ -139,5 +152,5 @@ async fn main() -> Result<(), Box<dyn Error>> {
         //     property.playback_status = get_mpris_playback_status(&connection, bus_name).await?;
         //     dbg!(&bus_name, &property.position, &property.playback_status);
         // }
-    }
+    // }
 }
