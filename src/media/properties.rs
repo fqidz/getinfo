@@ -194,7 +194,7 @@ impl Metadata {
     }
 }
 
-#[derive(Type, Deserialize, Debug)]
+#[derive(Type, Deserialize, Debug, PartialEq, Eq)]
 #[zvariant(signature = "s")]
 pub enum PlaybackStatus {
     Playing,
@@ -211,6 +211,19 @@ impl TryFrom<OwnedValue> for PlaybackStatus {
             "Paused" => Ok(Self::Paused),
             "Stopped" => Ok(Self::Stopped),
             _ => { Err(zbus::zvariant::Error::IncorrectType) }
+        }
+    }
+}
+
+impl TryFrom<String> for PlaybackStatus {
+    type Error = &'static str;
+
+    fn try_from(value: String) -> Result<Self, Self::Error> {
+        match value.as_str() {
+            "Playing" => Ok(Self::Playing),
+            "Paused" => Ok(Self::Paused),
+            "Stopped" => Ok(Self::Stopped),
+            _ => { Err("Invalid playback status") }
         }
     }
 }
