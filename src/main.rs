@@ -1,7 +1,12 @@
 mod media;
 
 use std::{
-    cell::RefCell, collections::HashMap, error::Error, future::pending, sync::Arc, time::Duration,
+    cell::RefCell,
+    collections::HashMap,
+    error::Error,
+    future::pending,
+    sync::Arc,
+    time::{Duration, Instant, SystemTime},
 };
 
 use dashmap::{DashMap, Entry};
@@ -99,27 +104,28 @@ async fn main() -> Result<(), Box<dyn Error>> {
     let name_owner_changed = Arc::new(Mutex::new(proxy_dbus.receive_name_owner_changed().await?));
 
     let interval = Arc::new(Mutex::new(interval(Duration::from_secs(1))));
-    interval.clone().lock().await.set_missed_tick_behavior(MissedTickBehavior::Skip);
-    // // call interval.tick() here so that next tick will not execute immidiately
-    // interval.tick().await;
+    interval
+        .clone()
+        .lock()
+        .await
+        .set_missed_tick_behavior(MissedTickBehavior::Skip);
 
     let bus_names = get_mpris_bus_names(&connection).await?;
     let bus_properties = Arc::new(DashMap::new());
-    let proxy_properties_changed_signals = Arc::new(DashMap::new());
+    let property_streams = Arc::new(DashMap::new());
 
     for bus_name in bus_names {
         bus_properties.insert(
             bus_name.clone(),
-            get_mpris_all_properties(&connection, &bus_name).await?,
+            (
+                get_mpris_all_properties(&connection, &bus_name).await?,
+                None::<SystemTime>,
+            ),
         );
-        let proxy_properties = PropertiesProxy::new(
-            &connection,
-            bus_name.clone(),
-            "/org/mpris/MediaPlayer2",
-        )
-        .await?;
-        let proxy_properties_changed_signal = proxy_properties.receive_properties_changed().await?;
-        proxy_properties_changed_signals.insert(bus_name.clone(), proxy_properties_changed_signal);
+        let proxy =
+            PropertiesProxy::new(&connection, bus_name.clone(), "/org/mpris/MediaPlayer2").await?;
+        let stream = proxy.receive_properties_changed().await?;
+        property_streams.clone().insert(bus_name.clone(), stream);
     }
 
     // let properties_changed_signal = Arc::new(Mutex::new(
@@ -130,11 +136,10 @@ async fn main() -> Result<(), Box<dyn Error>> {
     // https://bugzilla.mozilla.org/show_bug.cgi?id=1950461
     //
     // https://phabricator.services.mozilla.com/D242633
-    // loop {
     let name_owner_changed_handle = tokio::spawn({
         let name_owner_changed_cloned = name_owner_changed.clone();
+        let property_streams_cloned = property_streams.clone();
         let bus_properties_cloned = bus_properties.clone();
-        let conn_test = Connection::session().await.unwrap();
         async move {
             loop {
                 if let Some(name) = name_owner_changed_cloned.lock().await.next().await {
@@ -144,13 +149,24 @@ async fn main() -> Result<(), Box<dyn Error>> {
                     if bus_name.starts_with("org.mpris.MediaPlayer2") {
                         match bus_properties_cloned.entry(bus_name.clone()) {
                             Entry::Occupied(occupied_entry) => {
+                                property_streams_cloned.remove(&bus_name);
                                 occupied_entry.remove();
                             }
                             Entry::Vacant(vacant_entry) => {
-                                let property = get_mpris_all_properties(&conn_test, &bus_name)
-                                    .await
-                                    .unwrap();
-                                vacant_entry.insert(property);
+                                let property =
+                                    get_mpris_all_properties(&connection.clone(), &bus_name)
+                                        .await
+                                        .unwrap();
+                                let proxy = PropertiesProxy::new(
+                                    &connection.clone(),
+                                    bus_name.clone(),
+                                    "/org/mpris/MediaPlayer2",
+                                )
+                                .await
+                                .unwrap();
+                                let stream = proxy.receive_properties_changed().await.unwrap();
+                                property_streams_cloned.insert(bus_name.clone(), stream);
+                                vacant_entry.insert((property, None));
                             }
                         }
                     }
@@ -159,54 +175,55 @@ async fn main() -> Result<(), Box<dyn Error>> {
         }
     });
 
-    let playback_status_changed_handle = tokio::spawn({
-        let proxy_properties_changed_signals_cloned = proxy_properties_changed_signals.clone();
-        let bus_properties_cloned = bus_properties.clone();
-        let interval_cloned = interval.clone();
-        async move {
-            loop {
-                for mut pair in proxy_properties_changed_signals_cloned.iter_mut() {
-                    let (bus_name, bus_proxy_properties_changed) = pair.pair_mut();
-                    if let Some(properties_changed_message) =
-                        bus_proxy_properties_changed.next().await
-                    {
-                        let body = properties_changed_message.message().body();
-                        let mut message: (String, HashMap<String, Value>, Vec<String>) =
-                            body.deserialize().unwrap();
-                        dbg!(&message);
-                        let playback_status = PlaybackStatus::try_from(
-                            String::try_from(message.1.remove("PlaybackStatus").unwrap()).unwrap(),
-                        )
-                        .unwrap();
-                        let mut bus_entry = bus_properties_cloned.get_mut(bus_name).unwrap();
-                        let bus_property = bus_entry.value_mut();
-                        bus_property.playback_status = playback_status;
-                        dbg!(bus_property);
-                        interval_cloned.lock().await.reset_immediately();
-                    }
-                }
-            }
-        }
-    });
-
-    let update_position_handle = tokio::spawn({
-        let bus_properties_cloned = bus_properties.clone();
-        let conn_test = Connection::session().await.unwrap();
-        let interval_cloned = interval.clone();
-        async move {
-            loop {
-                interval_cloned.lock().await.tick().await;
-                for mut pair in bus_properties_cloned.iter_mut() {
-                    let (bus_name, bus_property) = pair.pair_mut();
-                    if bus_property.playback_status == PlaybackStatus::Playing {
-                        bus_property.position =
-                            get_mpris_position(&connection, bus_name).await.unwrap();
-                        dbg!(&bus_name, &bus_property);
-                    }
-                }
-            }
-        }
-    });
+    //
+    // let playback_status_changed_handle = tokio::spawn({
+    //     let proxy_properties_changed_signals_cloned = proxy_properties_changed_signals.clone();
+    //     let bus_properties_cloned = bus_properties.clone();
+    //     let interval_cloned = interval.clone();
+    //     async move {
+    //         loop {
+    //             for mut pair in proxy_properties_changed_signals_cloned.iter_mut() {
+    //                 let (bus_name, bus_proxy_properties_changed) = pair.pair_mut();
+    //                 if let Some(properties_changed_message) =
+    //                     bus_proxy_properties_changed.next().await
+    //                 {
+    //                     let body = properties_changed_message.message().body();
+    //                     let mut message: (String, HashMap<String, Value>, Vec<String>) =
+    //                         body.deserialize().unwrap();
+    //                     dbg!(&message);
+    //                     let playback_status = PlaybackStatus::try_from(
+    //                         String::try_from(message.1.remove("PlaybackStatus").unwrap()).unwrap(),
+    //                     )
+    //                     .unwrap();
+    //                     let mut bus_entry = bus_properties_cloned.get_mut(bus_name).unwrap();
+    //                     let bus_property = bus_entry.value_mut();
+    //                     bus_property.playback_status = playback_status;
+    //                     dbg!(bus_property);
+    //                     interval_cloned.lock().await.reset_immediately();
+    //                 }
+    //             }
+    //         }
+    //     }
+    // });
+    //
+    // let update_position_handle = tokio::spawn({
+    //     let bus_properties_cloned = bus_properties.clone();
+    //     let conn_test = Connection::session().await.unwrap();
+    //     let interval_cloned = interval.clone();
+    //     async move {
+    //         loop {
+    //             interval_cloned.lock().await.tick().await;
+    //             for mut pair in bus_properties_cloned.iter_mut() {
+    //                 let (bus_name, bus_property) = pair.pair_mut();
+    //                 if bus_property.playback_status == PlaybackStatus::Playing {
+    //                     bus_property.position =
+    //                         get_mpris_position(&connection, bus_name).await.unwrap();
+    //                     dbg!(&bus_name, &bus_property);
+    //                 }
+    //             }
+    //         }
+    //     }
+    // });
 
     pending::<()>().await;
     Ok(())
