@@ -1,0 +1,30 @@
+[package]
+name = "media-player"
+description = ""
+repository = ""
+version.workspace = true
+license.workspace = true
+edition.workspace = true
+# authors.workspace = true
+# categories.workspace = true
+# homepage.workspace = true
+# keywords.workspace = true
+# readme.workspace = true
+
+[lints]
+workspace = true
+
+[lib]
+path = "src/date.rs"
+
+[dependencies]
+clap = { workspace = true }
+dashmap = { workspace = true }
+futures-lite = { workspace = true }
+serde = { workspace = true }
+tokio = { workspace = true }
+zbus = { workspace = true }
+
+[[bin]]
+name = "media-player"
+path = "src/main.rs"

@@ -14,7 +14,9 @@
         pkgs.rustc
         pkgs.rust-analyzer
         pkgs.rustfmt
+        pkgs.clippy
         pkgs.cargo
+
         pkgs.hyperfine
         pkgs.upx
       ];

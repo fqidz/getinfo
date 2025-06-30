@@ -1,14 +1,44 @@
 [package]
 name = "bar-scripts"
-version = "0.1.0"
-edition = "2024"
+version.workspace = true
+license.workspace = true
+edition.workspace = true
+# authors.workspace = true
+# categories.workspace = true
+# homepage.workspace = true
+# keywords.workspace = true
+# readme.workspace = true
 
-[dependencies]
+[workspace]
+resolver = "3"
+members = [
+    ".",
+    "lib/*",
+]
+
+[workspace.package]
+edition = "2024"
+license = "GPL-3.0-or-later"
+version = "0.1.0"
+
+[workspace.dependencies]
 dashmap = "6.1.0"
 futures-lite = "2.6.0"
 serde = "1.0.219"
 tokio = { version = "1.45.0", features = ["macros", "rt", "sync", "time"] }
 zbus = { version = "5.6.0", features = ["tokio"] }
+
+[dependencies]
+dashmap = { workspace = true }
+futures-lite = { workspace = true }
+serde = { workspace = true }
+tokio = { workspace = true }
+zbus = { workspace = true }
+
+# https://github.com/uutils/coreutils/blob/56ce0e28ad830e276929d9e2f798fb55bbc5112c/Cargo.toml#L623
+# cargo clippy --all-targets --workspace --message-format=json --quiet \
+#     | jq -r '.message.code.code | select(. != null and startswith("clippy::"))' \
+#     | sort | uniq -c | sort -h -r
 
 [profile.release]
 opt-level = 3
@@ -16,3 +46,8 @@ strip = true
 codegen-units = 1
 lto = "fat"
 panic = "abort"
+
+[workspace.lints.clippy]
+all = { level = "warn", priority = -1 }
+cargo = { level = "warn", priority = -1 }
+pedantic = { level = "warn", priority = -1 }
