@@ -1,5 +1,5 @@
 [package]
-name = "media-player"
+name = "battery"
 description = ""
 repository = ""
 version.workspace = true
@@ -19,8 +19,7 @@ path = "src/lib.rs"
 
 [dependencies]
 clap = { workspace = true }
-dashmap = { workspace = true }
-futures-lite = { workspace = true }
-serde = { workspace = true }
-tokio = { workspace = true }
-zbus = { workspace = true }
+# dashmap = { workspace = true }
+# futures-lite = { workspace = true }
+# serde = { workspace = true }
+# tokio = { workspace = true }
