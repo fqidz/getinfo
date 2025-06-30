@@ -1,6 +1,6 @@
 [package]
 name = "core"
-description = ""
+description = "core stuff"
 repository = ""
 version.workspace = true
 license.workspace = true

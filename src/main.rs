@@ -1,14 +1,14 @@
-use core::Script;
-
-use battery::Battery;
 use clap::command;
+use crate::commands::battery;
+
+mod commands;
 
 fn main() {
     let matches = command!()
         .propagate_version(true)
         .subcommand_required(true)
         .arg_required_else_help(true)
-        .subcommand(Battery::build_command())
+        .subcommand(battery::cli())
         .get_matches();
 
     match matches.subcommand() {
