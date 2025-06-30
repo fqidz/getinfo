@@ -22,17 +22,21 @@ license = "GPL-3.0-or-later"
 version = "0.1.0"
 
 [workspace.dependencies]
-clap = "4.5.40"
+clap = { version = "4.5.40", features = ["cargo"]}
 dashmap = "6.1.0"
 futures-lite = "2.6.0"
 serde = "1.0.219"
 tokio = { version = "1.45.0", features = ["macros", "rt", "sync", "time"] }
 zbus = { version = "5.6.0", features = ["tokio"] }
+core = { path = "lib/core"}
+media-player = { path = "lib/media-player"}
+battery = { path = "lib/battery"}
 
 [dependencies]
 clap = { workspace = true }
-media-player = { path = "lib/media-player"}
-battery = { path = "lib/battery"}
+core = { workspace = true }
+media-player = { workspace = true }
+battery = { workspace = true }
 
 # https://github.com/uutils/coreutils/blob/56ce0e28ad830e276929d9e2f798fb55bbc5112c/Cargo.toml#L623
 # cargo clippy --all-targets --workspace --message-format=json --quiet \

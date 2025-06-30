@@ -233,6 +233,7 @@ version = "0.1.0"
 dependencies = [
  "battery",
  "clap",
+ "core",
  "media-player",
 ]
 
@@ -241,6 +242,7 @@ name = "battery"
 version = "0.1.0"
 dependencies = [
  "clap",
+ "core",
 ]
 
 [[package]]
@@ -320,6 +322,13 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ca0197aee26d1ae37445ee532fefce43251d24cc7c166799f4d46817f1d3973"
 dependencies = [
  "crossbeam-utils",
+]
+
+[[package]]
+name = "core"
+version = "0.1.0"
+dependencies = [
+ "clap",
 ]
 
 [[package]]

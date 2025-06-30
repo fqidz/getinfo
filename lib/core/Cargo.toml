@@ -1,5 +1,5 @@
 [package]
-name = "battery"
+name = "core"
 description = ""
 repository = ""
 version.workspace = true
@@ -19,7 +19,6 @@ path = "src/lib.rs"
 
 [dependencies]
 clap = { workspace = true }
-core = { workspace = true }
 # dashmap = { workspace = true }
 # futures-lite = { workspace = true }
 # serde = { workspace = true }
