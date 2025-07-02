@@ -1,10 +1,9 @@
 [package]
 name = "gi_media_player"
 description = "Scripts for getting info on media player"
-repository = ""
+repository = "https://github.com/fqidz/getinfo/tree/main/crates/media_player"
 edition.workspace = true
 license.workspace = true
-repository.workspace = true
 version.workspace = true
 # authors.workspace = true
 # categories.workspace = true

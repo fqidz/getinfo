@@ -1,9 +1,9 @@
 [package]
 name = "gi_battery"
 description = "Scripts for battery information"
+repository = "https://github.com/fqidz/getinfo/tree/main/crates/battery"
 edition.workspace = true
 license.workspace = true
-repository.workspace = true
 version.workspace = true
 # authors.workspace = true
 # categories.workspace = true

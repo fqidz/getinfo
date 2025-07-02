@@ -1,10 +1,9 @@
 [package]
 name = "gi_core"
 description = "Core functionality for bars"
-repository = ""
+repository = "https://github.com/fqidz/getinfo/tree/main/crates/core"
 edition.workspace = true
 license.workspace = true
-repository.workspace = true
 version.workspace = true
 # authors.workspace = true
 # categories.workspace = true
