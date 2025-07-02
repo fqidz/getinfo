@@ -2,9 +2,10 @@
 name = "gi_core"
 description = "Core functionality for bars"
 repository = ""
-version.workspace = true
-license.workspace = true
 edition.workspace = true
+license.workspace = true
+repository.workspace = true
+version.workspace = true
 # authors.workspace = true
 # categories.workspace = true
 # homepage.workspace = true
