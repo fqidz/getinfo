@@ -1,6 +1,6 @@
 [package]
-name = "bar-scripts"
-description = "script stuff"
+name = "getinfo"
+description = "Collection of useful scripts for widgets, panels, and bars"
 version.workspace = true
 license.workspace = true
 edition.workspace = true
@@ -29,15 +29,16 @@ futures-lite = "2.6.0"
 serde = "1.0.219"
 tokio = { version = "1.45.0", features = ["macros", "rt", "sync", "time"] }
 zbus = { version = "5.6.0", features = ["tokio"] }
-core = { path = "crates/core"}
-media-player = { path = "crates/media-player"}
-battery = { path = "crates/battery"}
+gi_core = { version = "0.1.0", path = "crates/core" }
+gi_media_player = { version = "0.1.0", path = "crates/media_player" }
+gi_battery = { version = "0.1.0", path = "crates/battery"}
+thiserror = "2.0.12"
 
 [dependencies]
 clap = { workspace = true }
-core = { workspace = true }
-media-player = { workspace = true }
-battery = { workspace = true }
+gi_core = { workspace = true }
+gi_media_player = { workspace = true }
+gi_battery = { workspace = true }
 
 # https://github.com/uutils/coreutils/blob/56ce0e28ad830e276929d9e2f798fb55bbc5112c/Cargo.toml#L623
 # cargo clippy --all-targets --workspace --message-format=json --quiet \

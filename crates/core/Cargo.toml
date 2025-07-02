@@ -1,6 +1,6 @@
 [package]
-name = "core"
-description = "core stuff"
+name = "gi_core"
+description = "Core functionality for bars"
 repository = ""
 version.workspace = true
 license.workspace = true
@@ -19,6 +19,7 @@ path = "src/lib.rs"
 
 [dependencies]
 clap = { workspace = true }
+thiserror = { workspace = true }
 # dashmap = { workspace = true }
 # futures-lite = { workspace = true }
 # serde = { workspace = true }

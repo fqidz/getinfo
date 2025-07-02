@@ -1,6 +1,6 @@
 [package]
-name = "battery"
-description = "batery thing"
+name = "gi_battery"
+description = "Scripts for battery information"
 version.workspace = true
 license.workspace = true
 edition.workspace = true
@@ -18,7 +18,8 @@ path = "src/lib.rs"
 
 [dependencies]
 clap = { workspace = true }
-core = { workspace = true }
+gi_core = { workspace = true }
+thiserror = { workspace = true }
 # dashmap = { workspace = true }
 # futures-lite = { workspace = true }
 # serde = { workspace = true }

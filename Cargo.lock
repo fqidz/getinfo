@@ -228,24 +228,6 @@ dependencies = [
 ]
 
 [[package]]
-name = "bar-scripts"
-version = "0.1.0"
-dependencies = [
- "battery",
- "clap",
- "core",
- "media-player",
-]
-
-[[package]]
-name = "battery"
-version = "0.1.0"
-dependencies = [
- "clap",
- "core",
-]
-
-[[package]]
 name = "bitflags"
 version = "2.9.1"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -322,13 +304,6 @@ source = "registry+https://github.com/rust-lang/crates.io-index"
 checksum = "4ca0197aee26d1ae37445ee532fefce43251d24cc7c166799f4d46817f1d3973"
 dependencies = [
  "crossbeam-utils",
-]
-
-[[package]]
-name = "core"
-version = "0.1.0"
-dependencies = [
- "clap",
 ]
 
 [[package]]
@@ -447,6 +422,16 @@ dependencies = [
 ]
 
 [[package]]
+name = "getinfo"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "gi_battery",
+ "gi_core",
+ "gi_media_player",
+]
+
+[[package]]
 name = "getrandom"
 version = "0.3.3"
 source = "registry+https://github.com/rust-lang/crates.io-index"
@@ -456,6 +441,35 @@ dependencies = [
  "libc",
  "r-efi",
  "wasi 0.14.2+wasi-0.2.4",
+]
+
+[[package]]
+name = "gi_battery"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "gi_core",
+ "thiserror",
+]
+
+[[package]]
+name = "gi_core"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "thiserror",
+]
+
+[[package]]
+name = "gi_media_player"
+version = "0.1.0"
+dependencies = [
+ "clap",
+ "dashmap",
+ "futures-lite",
+ "serde",
+ "tokio",
+ "zbus",
 ]
 
 [[package]]
@@ -524,18 +538,6 @@ checksum = "96936507f153605bddfcda068dd804796c84324ed2510809e5b2a624c81da765"
 dependencies = [
  "autocfg",
  "scopeguard",
-]
-
-[[package]]
-name = "media-player"
-version = "0.1.0"
-dependencies = [
- "clap",
- "dashmap",
- "futures-lite",
- "serde",
- "tokio",
- "zbus",
 ]
 
 [[package]]
@@ -831,6 +833,26 @@ dependencies = [
  "once_cell",
  "rustix",
  "windows-sys 0.59.0",
+]
+
+[[package]]
+name = "thiserror"
+version = "2.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "567b8a2dae586314f7be2a752ec7474332959c6460e02bde30d702a66d488708"
+dependencies = [
+ "thiserror-impl",
+]
+
+[[package]]
+name = "thiserror-impl"
+version = "2.0.12"
+source = "registry+https://github.com/rust-lang/crates.io-index"
+checksum = "7f7cf42b4507d8ea322120659672cf1b9dbb93f8f2d4ecfd6e51350ff5b17a1d"
+dependencies = [
+ "proc-macro2",
+ "quote",
+ "syn",
 ]
 
 [[package]]

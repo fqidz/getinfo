@@ -1,6 +1,6 @@
 [package]
-name = "media-player"
-description = "media player thingies"
+name = "gi_media_player"
+description = "Scripts for getting info on media player"
 repository = ""
 version.workspace = true
 license.workspace = true
