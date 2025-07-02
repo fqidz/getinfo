@@ -2,7 +2,7 @@
 ## TODO
 ### Main Features
 - [ ] Battery
-    - [ ] Charge
+    - [x] Charge
     - [ ] Time to full/empty
     - [ ] Temperature
     - [ ] Watch/Polling
