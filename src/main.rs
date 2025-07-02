@@ -12,10 +12,7 @@ fn main() {
         .get_matches();
 
     match matches.subcommand() {
-        Some(("battery", sub_matches)) => println!(
-            "'bar-scripts battery' was used, test is: {:?}",
-            sub_matches.get_one::<String>("TEST")
-        ),
+        Some(("battery", sub_matches)) => battery::exec(sub_matches),
         _ => unreachable!("Exhausted list of subcommands and subcommand_required prevents `None`"),
     }
 }
