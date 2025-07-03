@@ -47,7 +47,7 @@ pub fn cli() -> Command {
                 .long("separator")
                 .value_name("STRING")
                 .default_value(" ")
-                .help("char/string to use to separate the output info"),
+                .help("Character or string to use for separating output infos"),
         )
 }
 
@@ -132,6 +132,7 @@ fn format_output(
                     batteries
                         .get_charge_percentage_single(battery_name)
                         .unwrap()
+                        * 100.0
                 )
                 .unwrap();
             }

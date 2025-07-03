@@ -1,5 +1,5 @@
-use clap::command;
 use crate::commands::battery;
+use clap::command;
 
 mod commands;
 

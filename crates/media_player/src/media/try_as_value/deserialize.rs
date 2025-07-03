@@ -4,7 +4,6 @@ use std::marker::PhantomData;
 use serde::de::{Deserializer, SeqAccess, Visitor};
 use zbus::zvariant::{Signature, Type};
 
-
 /// A wrapper to deserialize a value to `T: Type + serde::Deserialize`.
 ///
 /// When the type of a value is well-known, you may avoid the cost and complexity of wrapping to a

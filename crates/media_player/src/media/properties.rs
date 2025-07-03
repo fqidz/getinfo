@@ -1,7 +1,10 @@
 use super::try_as_value::{self, try_as_optional};
 
 use serde::Deserialize;
-use zbus::zvariant::{as_value::{self, optional}, OwnedValue, Type};
+use zbus::zvariant::{
+    OwnedValue, Type,
+    as_value::{self, optional},
+};
 
 /// https://www.freedesktop.org/wiki/Specifications/mpris-spec/metadata/
 /// https://specifications.freedesktop.org/mpris-spec/latest/Track_List_Interface.html#Mapping:Metadata_Map
@@ -12,67 +15,151 @@ pub struct Metadata {
     #[serde(with = "try_as_value", rename(deserialize = "mpris:trackid"))]
     mpris_trackid: String,
 
-    #[serde(with = "try_as_optional", rename(deserialize = "mpris:length"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "try_as_optional",
+        rename(deserialize = "mpris:length"),
+        skip_serializing_if = "Option::is_none"
+    )]
     mpris_length: Option<i64>,
 
-    #[serde(with = "optional", rename(deserialize = "mpris:artUrl"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "mpris:artUrl"),
+        skip_serializing_if = "Option::is_none"
+    )]
     mpris_art_url: Option<String>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:album"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:album"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_album: Option<String>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:albumArtist"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:albumArtist"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_album_artist: Option<Vec<String>>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:artist"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:artist"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_artist: Option<Vec<String>>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:asText"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:asText"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_as_text: Option<String>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:audioBPM"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:audioBPM"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_audio_bpm: Option<i32>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:autoRating"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:autoRating"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_auto_rating: Option<f64>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:comment"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:comment"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_comment: Option<Vec<String>>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:composer"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:composer"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_composer: Option<Vec<String>>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:contentCreated"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:contentCreated"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_content_created: Option<String>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:discNumber"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:discNumber"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_disc_number: Option<i32>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:firstUsed"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:firstUsed"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_first_used: Option<String>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:genre"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:genre"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_genre: Option<Vec<String>>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:lastUsed"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:lastUsed"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_last_used: Option<String>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:lyricist"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:lyricist"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_lyricist: Option<Vec<String>>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:title"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:title"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_title: Option<String>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:trackNumber"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:trackNumber"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_track_number: Option<i32>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:url"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:url"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_url: Option<String>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:useCount"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:useCount"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_use_count: Option<i32>,
 
-    #[serde(with = "optional", rename(deserialize = "xesam:userRating"), skip_serializing_if = "Option::is_none")]
+    #[serde(
+        with = "optional",
+        rename(deserialize = "xesam:userRating"),
+        skip_serializing_if = "Option::is_none"
+    )]
     xesam_user_rating: Option<f64>,
 }
 
@@ -210,7 +297,7 @@ impl TryFrom<OwnedValue> for PlaybackStatus {
             "Playing" => Ok(Self::Playing),
             "Paused" => Ok(Self::Paused),
             "Stopped" => Ok(Self::Stopped),
-            _ => { Err(zbus::zvariant::Error::IncorrectType) }
+            _ => Err(zbus::zvariant::Error::IncorrectType),
         }
     }
 }
@@ -223,7 +310,7 @@ impl TryFrom<String> for PlaybackStatus {
             "Playing" => Ok(Self::Playing),
             "Paused" => Ok(Self::Paused),
             "Stopped" => Ok(Self::Stopped),
-            _ => { Err("Invalid playback status") }
+            _ => Err("Invalid playback status"),
         }
     }
 }
