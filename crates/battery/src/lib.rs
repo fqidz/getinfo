@@ -1,10 +1,8 @@
-use std::{fs, path::PathBuf};
+use std::{fs, path::PathBuf, str::FromStr};
 
 use gi_core::Error;
 
 const SYS_BATTERIES_PATH: &str = "/sys/class/power_supply";
-
-pub const MAIN_BATTERY: &str = "BAT0";
 
 type Percentage = f32;
 type AmpereHours = i32;
@@ -17,6 +15,13 @@ pub struct Battery {
     pub path: PathBuf,
     pub name: String,
     pub charge_full: AmpereHours,
+}
+
+#[derive(Clone)]
+pub enum BatteryInfoName {
+    ChargeNow,
+    ChargeNowPercentage,
+    ChargeFull,
 }
 
 impl Batteries {
@@ -80,7 +85,11 @@ impl Batteries {
         })
     }
 
-    pub fn get_charge_single(&self, battery_name: &str) -> Result<AmpereHours, Error> {
+    pub fn get_charge_full_single(&self, battery_name: &str) -> Result<AmpereHours, Error> {
+        Ok(self.get_battery(battery_name)?.charge_full)
+    }
+
+    pub fn get_charge_now_single(&self, battery_name: &str) -> Result<AmpereHours, Error> {
         Ok(
             fs::read_to_string(self.get_battery(battery_name)?.path.join("charge_now"))?
                 .trim_end()
@@ -88,10 +97,30 @@ impl Batteries {
         )
     }
 
-    pub fn get_percentage_single(&self, battery_name: &str) -> Result<Percentage, Error> {
+    /// Percentage from 0.0 to 1.0 inclusive
+    pub fn get_charge_percentage_single(&self, battery_name: &str) -> Result<Percentage, Error> {
         let battery = self.get_battery(battery_name)?;
         let charge_full = battery.charge_full as Percentage;
-        let charge = (self.get_charge_single(battery_name)?) as Percentage;
-        Ok(charge / charge_full * 100.0)
+        let charge = (self.get_charge_now_single(battery_name)?) as Percentage;
+        Ok(charge / charge_full)
+    }
+}
+
+impl FromStr for BatteryInfoName {
+    type Err = Error;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "charge_now" | "charge" => Ok(Self::ChargeNow),
+            "charge_now_percentage"
+            | "charge_percentage"
+            | "now_percentage"
+            | "percentage"
+            | "percent" => Ok(Self::ChargeNowPercentage),
+            "charge_full" => Ok(Self::ChargeFull),
+            _ => Err(Self::Err::InvalidInfoName {
+                name: s.to_string(),
+            }),
+        }
     }
 }

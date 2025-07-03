@@ -1,19 +1,29 @@
 use std::{sync::mpsc, thread, time::Duration};
+use std::fmt::Write as _;
 
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
-use gi_battery::Batteries;
+use gi_battery::{Batteries, BatteryInfoName};
 use notify::{Config, Event, PollWatcher, RecursiveMode, Watcher};
 
 pub fn cli() -> Command {
     Command::new("battery")
         .about("Scripts for battery info")
         .arg(
+            Arg::new("info_names")
+                .value_name("INFO_NAME")
+                .action(ArgAction::Append)
+                .value_parser(value_parser!(BatteryInfoName))
+                .value_delimiter(',')
+                .default_value("charge_percentage")
+                .help("Specify which info(s) to get (e.g. `getinfo battery charge_full,charge_percentage`)"),
+        )
+        .arg(
             Arg::new("watch")
                 .short('w')
                 .long("watch")
                 .conflicts_with("poll")
                 .action(ArgAction::SetTrue)
-                .help("Watches/follows the requested info and outputs all whenever one changes"),
+                .help("Outputs only when info changes"),
         )
         .arg(
             Arg::new("poll")
@@ -24,12 +34,27 @@ pub fn cli() -> Command {
                 .value_name("MILLISECONDS")
                 .help("Outputs after every interval"),
         )
+        .arg(
+            Arg::new("separator")
+                .short('s')
+                .long("separator")
+                .value_name("STRING")
+                .default_value(" ")
+                .help("char/string to use to separate the output info"),
+        )
 }
 
 // TODO: proper error handling
-// TODO: move watch and poll to the gi_battery crate
+// TODO: move a lot of the things here to the gi_battery crate
 pub fn exec(args: &ArgMatches) {
     let batteries = Batteries::init().unwrap();
+
+    let separator = args
+        .get_one::<String>("separator")
+        .expect("has a default value");
+
+    let input_info_names = parse_info_names(args);
+
     if args.get_flag("watch") {
         let (tx, rx) = mpsc::channel::<notify::Result<Event>>();
         let config = Config::default()
@@ -38,33 +63,57 @@ pub fn exec(args: &ArgMatches) {
 
         let mut watcher = PollWatcher::new(tx, config).unwrap();
 
-        let path = batteries.get_battery("BAT1").unwrap().path.join("charge_now");
+        let path = batteries
+            .get_battery("BAT1")
+            .unwrap()
+            .path
+            .join("charge_now");
         watcher.watch(&path, RecursiveMode::NonRecursive).unwrap();
 
-        let mut charge = batteries.get_charge_single("BAT1").unwrap();
-        let mut percentage = batteries.get_percentage_single("BAT1").unwrap();
-        println!("{charge} {percentage}%");
-
+        println!("{}", format_output(&batteries, &input_info_names, "BAT1", separator));
         for res in rx {
-            match res {
-                Ok(_event) => {
-                    charge = batteries.get_charge_single("BAT1").unwrap();
-                    percentage = batteries.get_percentage_single("BAT1").unwrap();
-                    println!("{charge} {percentage}%");
-                }
-                Err(e) => eprintln!("Watcher error: {}", e),
-            }
+            res.unwrap();
+            println!("{}", format_output(&batteries, &input_info_names, "BAT1", separator));
         }
     } else if let Some(milliseconds) = args.get_one::<u64>("poll") {
         loop {
-            let charge = batteries.get_charge_single("BAT1").unwrap();
-            let percentage = batteries.get_percentage_single("BAT1").unwrap();
-            println!("{charge} {percentage}%");
+            println!("{}", format_output(&batteries, &input_info_names, "BAT1", separator));
             thread::sleep(Duration::from_millis(*milliseconds));
         }
     } else {
-        let charge = batteries.get_charge_single("BAT1").unwrap();
-        let percentage = batteries.get_percentage_single("BAT1").unwrap();
-        println!("{charge} {percentage}%");
+        println!("{}", format_output(&batteries, &input_info_names, "BAT1", separator));
     }
+}
+
+fn format_output(
+    batteries: &Batteries,
+    info_names: &Vec<&BatteryInfoName>,
+    battery_name: &str,
+    separator: &str,
+) -> String {
+    let mut output = String::with_capacity(5);
+    for (i, info_name) in info_names.iter().enumerate() {
+        match info_name {
+            BatteryInfoName::ChargeNow => {
+                write!(output, "{}", batteries.get_charge_now_single(battery_name).unwrap()).unwrap();
+            }
+            BatteryInfoName::ChargeNowPercentage => {
+                write!(output, "{}", batteries.get_charge_percentage_single(battery_name).unwrap()).unwrap();
+            }
+            BatteryInfoName::ChargeFull => {
+                write!(output, "{}", batteries.get_charge_full_single(battery_name).unwrap()).unwrap();
+            }
+        }
+        if i < info_names.len() - 1 {
+                write!(output, "{}", separator).unwrap();
+        }
+    }
+    output
+}
+
+pub fn parse_info_names(matches: &ArgMatches) -> Vec<&BatteryInfoName> {
+    matches
+        .get_many::<BatteryInfoName>("info_names")
+        .expect("has a default value")
+        .collect::<Vec<_>>()
 }

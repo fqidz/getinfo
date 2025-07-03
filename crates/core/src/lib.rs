@@ -14,6 +14,9 @@ pub enum Error {
     #[error("Invalid battery \"{}\"", .name)]
     BatteryNotFound { name: String },
 
+    #[error("Invalid info name \"{}\"", .name)]
+    InvalidInfoName { name: String },
+
     #[error("Invalid path: {}", .path)]
     InvalidPath { path: String },
 }
