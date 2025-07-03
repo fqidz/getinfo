@@ -106,6 +106,57 @@ impl Batteries {
     }
 }
 
+pub fn get_main_battery_name() -> Result<String, Error> {
+    let sys_dir = fs::read_dir(SYS_BATTERIES_PATH)?;
+    let battery_dirs = sys_dir
+        .filter_map(|dir| {
+            if let Ok(dir) = dir {
+                return Some(dir);
+            }
+            None
+        })
+        .collect::<Vec<_>>();
+
+    let mut battery_names = Vec::with_capacity(1);
+
+    for battery_dir in battery_dirs {
+        let path = battery_dir.path();
+        let name = path
+            .file_name()
+            .expect("Directory name should always be valid.")
+            .to_string_lossy()
+            .to_string();
+
+        if name.starts_with("BAT") {
+            battery_names.push(name);
+        }
+    }
+
+    if battery_names.len() == 1 {
+        Ok(battery_names[0].clone())
+    } else if battery_names.len() > 1 {
+        battery_names.sort_unstable_by(|a, b| {
+            let a_num = a
+                .strip_prefix("BAT")
+                .expect("Directory starts with 'BAT'")
+                .parse::<u8>()
+                .expect("It's always BAT[number]");
+            let b_num = b
+                .strip_prefix("BAT")
+                .expect("Directory starts with 'BAT'")
+                .parse::<u8>()
+                .expect("It's always BAT[number]");
+
+            a_num.cmp(&b_num)
+        });
+        Ok(battery_names[0].clone())
+    } else {
+        Err(Error::NoBatteriesFound {
+            path: SYS_BATTERIES_PATH.to_string(),
+        })
+    }
+}
+
 impl FromStr for BatteryInfoName {
     type Err = Error;
 

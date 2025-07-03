@@ -1,8 +1,8 @@
-use std::{sync::mpsc, thread, time::Duration};
 use std::fmt::Write as _;
+use std::{sync::mpsc, thread, time::Duration};
 
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
-use gi_battery::{Batteries, BatteryInfoName};
+use gi_battery::{Batteries, BatteryInfoName, get_main_battery_name};
 use notify::{Config, Event, PollWatcher, RecursiveMode, Watcher};
 
 pub fn cli() -> Command {
@@ -15,7 +15,14 @@ pub fn cli() -> Command {
                 .value_parser(value_parser!(BatteryInfoName))
                 .value_delimiter(',')
                 .default_value("charge_percentage")
-                .help("Specify which info(s) to get (e.g. `getinfo battery charge_full,charge_percentage`)"),
+                .help("Specify which info(s) to get (e.g. 'charge_full,charge_percentage')"),
+        )
+        .arg(
+            Arg::new("name")
+                .value_name("BAT")
+                .short('n')
+                .long("name")
+                .help("Specify battery name in the case of multiple batteries (e.g. 'BAT1'). Defaults to lowest-numbered battery"),
         )
         .arg(
             Arg::new("watch")
@@ -48,6 +55,10 @@ pub fn cli() -> Command {
 // TODO: move a lot of the things here to the gi_battery crate
 pub fn exec(args: &ArgMatches) {
     let batteries = Batteries::init().unwrap();
+    let default_battery_name = get_main_battery_name().unwrap();
+    let battery_name = args
+        .get_one::<String>("name")
+        .unwrap_or(&default_battery_name);
 
     let separator = args
         .get_one::<String>("separator")
@@ -64,24 +75,36 @@ pub fn exec(args: &ArgMatches) {
         let mut watcher = PollWatcher::new(tx, config).unwrap();
 
         let path = batteries
-            .get_battery("BAT1")
+            .get_battery(battery_name)
             .unwrap()
             .path
             .join("charge_now");
         watcher.watch(&path, RecursiveMode::NonRecursive).unwrap();
 
-        println!("{}", format_output(&batteries, &input_info_names, "BAT1", separator));
+        println!(
+            "{}",
+            format_output(&batteries, &input_info_names, battery_name, separator)
+        );
         for res in rx {
             res.unwrap();
-            println!("{}", format_output(&batteries, &input_info_names, "BAT1", separator));
+            println!(
+                "{}",
+                format_output(&batteries, &input_info_names, battery_name, separator)
+            );
         }
     } else if let Some(milliseconds) = args.get_one::<u64>("poll") {
         loop {
-            println!("{}", format_output(&batteries, &input_info_names, "BAT1", separator));
+            println!(
+                "{}",
+                format_output(&batteries, &input_info_names, battery_name, separator)
+            );
             thread::sleep(Duration::from_millis(*milliseconds));
         }
     } else {
-        println!("{}", format_output(&batteries, &input_info_names, "BAT1", separator));
+        println!(
+            "{}",
+            format_output(&batteries, &input_info_names, battery_name, separator)
+        );
     }
 }
 
@@ -95,17 +118,34 @@ fn format_output(
     for (i, info_name) in info_names.iter().enumerate() {
         match info_name {
             BatteryInfoName::ChargeNow => {
-                write!(output, "{}", batteries.get_charge_now_single(battery_name).unwrap()).unwrap();
+                write!(
+                    output,
+                    "{}",
+                    batteries.get_charge_now_single(battery_name).unwrap()
+                )
+                .unwrap();
             }
             BatteryInfoName::ChargeNowPercentage => {
-                write!(output, "{}", batteries.get_charge_percentage_single(battery_name).unwrap()).unwrap();
+                write!(
+                    output,
+                    "{}",
+                    batteries
+                        .get_charge_percentage_single(battery_name)
+                        .unwrap()
+                )
+                .unwrap();
             }
             BatteryInfoName::ChargeFull => {
-                write!(output, "{}", batteries.get_charge_full_single(battery_name).unwrap()).unwrap();
+                write!(
+                    output,
+                    "{}",
+                    batteries.get_charge_full_single(battery_name).unwrap()
+                )
+                .unwrap();
             }
         }
         if i < info_names.len() - 1 {
-                write!(output, "{}", separator).unwrap();
+            write!(output, "{}", separator).unwrap();
         }
     }
     output
