@@ -3,7 +3,7 @@
 ### Main Features
 - [ ] Battery
     - [x] Charge
-    - [ ] Time to full/empty
+    - [x] Time to full/empty
     - [ ] Temperature
     - [ ] Watch/Polling
 - [ ] CPU
