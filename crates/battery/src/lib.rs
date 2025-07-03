@@ -45,8 +45,9 @@ impl Batteries {
                 continue;
             }
 
-            let charge_full =
-                fs::read_to_string(path.join("charge_full"))?.trim_end().parse::<AmpereHours>()?;
+            let charge_full = fs::read_to_string(path.join("charge_full"))?
+                .trim_end()
+                .parse::<AmpereHours>()?;
 
             battery_infos.push(Battery {
                 path,
@@ -79,18 +80,18 @@ impl Batteries {
         })
     }
 
-    pub fn get_battery_charge(&self, battery_name: &str) -> Result<AmpereHours, Error> {
+    pub fn get_charge_single(&self, battery_name: &str) -> Result<AmpereHours, Error> {
         Ok(
             fs::read_to_string(self.get_battery(battery_name)?.path.join("charge_now"))?
-            .trim_end()
+                .trim_end()
                 .parse::<AmpereHours>()?,
         )
     }
 
-    pub fn get_battery_percentage(&self, battery_name: &str) -> Result<Percentage, Error> {
+    pub fn get_percentage_single(&self, battery_name: &str) -> Result<Percentage, Error> {
         let battery = self.get_battery(battery_name)?;
         let charge_full = battery.charge_full as Percentage;
-        let charge = (self.get_battery_charge(battery_name)?) as Percentage;
+        let charge = (self.get_charge_single(battery_name)?) as Percentage;
         Ok(charge / charge_full * 100.0)
     }
 }
