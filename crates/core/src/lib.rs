@@ -17,6 +17,9 @@ pub enum Error {
     #[error("Invalid info name \"{}\"", .name)]
     InvalidInfoName { name: String },
 
+    #[error("Invalid battery status \"{}\". Expected \"Charging\", \"Discharging\", or \"Full\" ", .status)]
+    InvalidBatteryStatus { status: String },
+
     #[error("Invalid path: {}", .path)]
     InvalidPath { path: String },
 }

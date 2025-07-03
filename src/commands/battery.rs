@@ -1,8 +1,11 @@
 use std::fmt::Write as _;
+use std::time::Instant;
 use std::{sync::mpsc, thread, time::Duration};
 
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
-use gi_battery::{Batteries, BatteryInfoName, get_main_battery_name};
+use gi_battery::{
+    Batteries, BatteryInfoName, BatteryStatus, DurationExt, Timestamp, get_main_battery_name,
+};
 use notify::{Config, Event, PollWatcher, RecursiveMode, Watcher};
 
 pub fn cli() -> Command {
@@ -74,23 +77,64 @@ pub fn exec(args: &ArgMatches) {
 
         let mut watcher = PollWatcher::new(tx, config).unwrap();
 
-        let path = batteries
-            .get_battery(battery_name)
-            .unwrap()
-            .path
-            .join("charge_now");
-        watcher.watch(&path, RecursiveMode::NonRecursive).unwrap();
+        let path = &batteries.get_battery(battery_name).unwrap().path;
 
-        println!(
-            "{}",
-            format_output(&batteries, &input_info_names, battery_name, separator)
-        );
-        for res in rx {
-            res.unwrap();
-            println!(
-                "{}",
-                format_output(&batteries, &input_info_names, battery_name, separator)
-            );
+        // TODO: better way to decide what files to watch
+        for info_name in &input_info_names {
+            match info_name {
+                BatteryInfoName::ChargeNow | BatteryInfoName::ChargeNowPercentage => watcher
+                    .watch(&path.join("charge_now"), RecursiveMode::NonRecursive)
+                    .unwrap(),
+                BatteryInfoName::ChargeFull => { /* no-op */ }
+                BatteryInfoName::CurrentNow => {
+                    watcher
+                        .watch(&path.join("current_now"), RecursiveMode::NonRecursive)
+                        .unwrap();
+                }
+                BatteryInfoName::Status => watcher
+                    .watch(&path.join("status"), RecursiveMode::NonRecursive)
+                    .unwrap(),
+                BatteryInfoName::TimeRemaining => {
+                    watcher
+                        .watch(&path.join("charge_now"), RecursiveMode::NonRecursive)
+                        .unwrap();
+                    watcher
+                        .watch(&path.join("current_now"), RecursiveMode::NonRecursive)
+                        .unwrap();
+                    watcher
+                        .watch(&path.join("status"), RecursiveMode::NonRecursive)
+                        .unwrap();
+                }
+            }
+        }
+
+        let mut previous_output =
+            format_output(&batteries, &input_info_names, battery_name, separator);
+        println!("{}", previous_output);
+
+        // TODO: find a better way to prevent outputting redundant values other than checking it
+        // with the previous output
+        let mut time_last_outputted = Instant::now();
+        for _res in rx {
+            println!("....");
+            // prevent outputs in quick succession, such as when percentage reaches '100', it also
+            // updates status from 'Charging' to 'Full'
+            let time_outputted_now = Instant::now();
+
+            if time_last_outputted.elapsed().as_millis() > 0 {
+                let output = format_output(&batteries, &input_info_names, battery_name, separator);
+                if previous_output != output {
+                    println!("{}", output);
+                    previous_output = output;
+                }
+            }
+            // if time_last_outputted.elapsed().as_millis() > 15 {
+            //     println!(
+            //         "{}",
+            //
+            //     );
+            // }
+            time_last_outputted = time_outputted_now
         }
     } else if let Some(milliseconds) = args.get_one::<u64>("poll") {
         loop {
@@ -108,6 +152,7 @@ pub fn exec(args: &ArgMatches) {
     }
 }
 
+#[inline]
 fn format_output(
     batteries: &Batteries,
     info_names: &Vec<&BatteryInfoName>,
@@ -141,6 +186,32 @@ fn format_output(
                     output,
                     "{}",
                     batteries.get_charge_full_single(battery_name).unwrap()
+                )
+                .unwrap();
+            }
+            BatteryInfoName::CurrentNow => {
+                write!(
+                    output,
+                    "{}",
+                    batteries.get_current_now_single(battery_name).unwrap()
+                )
+                .unwrap();
+            }
+            BatteryInfoName::TimeRemaining => {
+                let timestamp = match batteries.get_status_single(battery_name).unwrap() {
+                    BatteryStatus::Full | BatteryStatus::NotCharging => Timestamp::default(),
+                    BatteryStatus::Charging | BatteryStatus::Discharging => batteries
+                        .get_time_remaining_single(battery_name)
+                        .unwrap()
+                        .display_as_timestamp(),
+                };
+                write!(output, "{}", timestamp).unwrap();
+            }
+            BatteryInfoName::Status => {
+                write!(
+                    output,
+                    "{}",
+                    batteries.get_status_single(battery_name).unwrap()
                 )
                 .unwrap();
             }
