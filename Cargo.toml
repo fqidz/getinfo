@@ -33,13 +33,15 @@ futures-lite = "2.6.0"
 serde = "1.0.219"
 tokio = { version = "1.45.0", features = ["macros", "rt", "sync", "time"] }
 zbus = { version = "5.6.0", features = ["tokio"] }
+thiserror = "2.0.12"
+notify = "8.0.0"
 gi_core = { version = "0.1.0", path = "crates/core" }
 gi_media_player = { version = "0.1.0", path = "crates/media_player" }
 gi_battery = { version = "0.1.0", path = "crates/battery"}
-thiserror = "2.0.12"
 
 [dependencies]
 clap = { workspace = true }
+notify = { workspace = true }
 gi_core = { workspace = true }
 gi_media_player = { workspace = true }
 gi_battery = { workspace = true }
