@@ -79,20 +79,28 @@ pub fn cli() -> Command {
         )
 }
 
+struct BatteryContext {
+    battery_name: String,
+    is_raw: bool,
+    separator: String,
+}
+
 struct BatterySubcommand<'a> {
     batteries: Batteries,
     info_names: &'a Vec<&'a BatteryInfoName>,
+    context: BatteryContext,
 }
 
 impl<'a> BatterySubcommand<'a> {
-    fn init(batteries: Batteries, info_names: &'a Vec<&'a BatteryInfoName>) -> Self {
+    fn init(batteries: Batteries, info_names: &'a Vec<&'a BatteryInfoName>, context: BatteryContext) -> Self {
         Self {
             batteries,
             info_names,
+            context,
         }
     }
 
-    fn watch(&mut self, is_raw: bool, battery_name: &str, separator: &str) {
+    fn watch(&mut self) {
         let (tx, rx) = mpsc::channel::<notify::Result<Event>>();
         let config = Config::default()
             .with_compare_contents(true)
@@ -100,7 +108,7 @@ impl<'a> BatterySubcommand<'a> {
 
         let mut watcher = PollWatcher::new(tx, config).unwrap();
 
-        let battery_path = &self.batteries.get_battery(battery_name).unwrap().path;
+        let battery_path = &self.batteries.get_battery(&self.context.battery_name).unwrap().path;
 
         // Although `notify` already handles duplicate watched files properly, we filter out duplicate
         // files just to avoid the extra calls to `watcher.watch(...)`. Have not tested if this is
@@ -118,13 +126,13 @@ impl<'a> BatterySubcommand<'a> {
                 .unwrap();
         }
 
-        let mut previous_output = self.get_output_string(is_raw, separator);
+        let mut previous_output = self.get_output_string();
         println!("{}", previous_output);
 
         // TODO: find a better way to prevent outputting redundant values other than checking it
         // with the previous output
         for _res in rx {
-            let output = self.get_output_string(is_raw, separator);
+            let output = self.get_output_string();
             if previous_output != output {
                 println!("{}", output);
                 previous_output = output;
@@ -132,21 +140,21 @@ impl<'a> BatterySubcommand<'a> {
         }
     }
 
-    fn poll(&self, milliseconds: u64, is_raw: bool, separator: &str) {
+    fn poll(&self, milliseconds: u64) {
         let duration = Duration::from_millis(milliseconds);
         loop {
-            println!("{}", self.get_output_string(is_raw, separator));
+            println!("{}", self.get_output_string());
             std::thread::sleep(duration);
         }
     }
 
-    fn get_output_string(&self, is_raw: bool, separator: &str) -> String {
+    fn get_output_string(&self) -> String {
         let mut output = String::with_capacity(5);
         let main_battery = self.batteries.get_main_battery().unwrap();
         for (i, info_name) in self.info_names.iter().enumerate() {
             match info_name {
                 BatteryInfoName::ChargeNow => {
-                    if is_raw {
+                    if self.context.is_raw {
                         write!(output, "{}", main_battery.get_charge_now().unwrap()).unwrap();
                     } else {
                         write!(
@@ -158,7 +166,7 @@ impl<'a> BatterySubcommand<'a> {
                     }
                 }
                 BatteryInfoName::ChargeNowPercentage => {
-                    if is_raw {
+                    if self.context.is_raw {
                         write!(
                             output,
                             "{}",
@@ -175,14 +183,14 @@ impl<'a> BatterySubcommand<'a> {
                     }
                 }
                 BatteryInfoName::ChargeFull => {
-                    if is_raw {
+                    if self.context.is_raw {
                         write!(output, "{}", main_battery.get_charge_full()).unwrap();
                     } else {
                         write!(output, "{}mAh", main_battery.get_charge_full() / 1000).unwrap();
                     }
                 }
                 BatteryInfoName::CurrentNow => {
-                    if is_raw {
+                    if self.context.is_raw {
                         write!(output, "{}", main_battery.get_current_now().unwrap()).unwrap();
                     } else {
                         write!(
@@ -194,7 +202,7 @@ impl<'a> BatterySubcommand<'a> {
                     }
                 }
                 BatteryInfoName::TimeRemaining => {
-                    if is_raw {
+                    if self.context.is_raw {
                         write!(output, "{}", main_battery.get_time_remaining().unwrap()).unwrap();
                     } else {
                         let timestamp = match main_battery.get_status().unwrap() {
@@ -213,7 +221,7 @@ impl<'a> BatterySubcommand<'a> {
                 }
             }
             if i < self.info_names.len() - 1 {
-                write!(output, "{}", separator).unwrap();
+                write!(output, "{}", self.context.separator).unwrap();
             }
         }
         output
@@ -235,16 +243,20 @@ pub fn exec(args: &ArgMatches) {
         .expect("has a default value");
 
     let input_info_names = parse_info_names(args);
-    let mut battery_subcommand = BatterySubcommand::init(batteries, &input_info_names);
+    let mut battery_subcommand = BatterySubcommand::init(batteries, &input_info_names, BatteryContext {
+        battery_name: battery_name.to_string(),
+        is_raw: *is_raw,
+        separator: separator.to_string(),
+    });
 
     if args.get_flag("watch") {
-        battery_subcommand.watch(*is_raw, battery_name, separator);
+        battery_subcommand.watch();
     } else if let Some(milliseconds) = args.get_one::<u64>("poll") {
-        battery_subcommand.poll(*milliseconds, *is_raw, separator)
+        battery_subcommand.poll(*milliseconds)
     } else {
         println!(
             "{}",
-            battery_subcommand.get_output_string(*is_raw, separator)
+            battery_subcommand.get_output_string()
         );
     }
 }
