@@ -4,7 +4,7 @@ use std::{sync::mpsc, time::Duration};
 
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
 use gi_battery::{
-    get_main_battery_name, AsTimestamp, Batteries, BatteryInfoName, BatteryStatus, Timestamp
+    AsTimestamp, Batteries, BatteryInfoName, BatteryStatus, Timestamp, get_main_battery_name,
 };
 use notify::{Config, Event, PollWatcher, RecursiveMode, Watcher};
 use serde::Serialize;
@@ -124,7 +124,6 @@ struct BatteryOutput {
     time_remaining: Option<String>,
 }
 
-
 impl<'a> BatterySubcommand<'a> {
     fn init(
         batteries: Batteries,
@@ -191,52 +190,56 @@ impl<'a> BatterySubcommand<'a> {
     }
 
     fn get_output_string(&self) -> String {
-        let main_battery = self.batteries.get_main_battery().unwrap();
+        let battery = self
+            .batteries
+            .get_battery(&self.context.battery_name)
+            .unwrap();
+
         let mut battery_output = BatteryOutput::default();
-        for (i, info_name) in self.info_names.iter().enumerate() {
+        for info_name in self.info_names.iter() {
             match info_name {
                 BatteryInfoName::ChargeNow => {
                     let string = if self.context.is_raw {
-                        main_battery.get_charge_now().unwrap().to_string()
+                        battery.get_charge_now().unwrap().to_string()
                     } else {
-                        format!("{}mAh", main_battery.get_charge_now().unwrap() / 1000)
+                        format!("{}mAh", battery.get_charge_now().unwrap() / 1000)
                     };
                     battery_output.charge_now = Some(string);
                 }
                 BatteryInfoName::ChargeNowPercentage => {
                     let string = if self.context.is_raw {
-                        main_battery.get_charge_now_percentage().unwrap().to_string()
+                        battery.get_charge_now_percentage().unwrap().to_string()
                     } else {
-                        format!("{}%", main_battery.get_charge_now_percentage().unwrap() * 100.0)
+                        format!("{}%", battery.get_charge_now_percentage().unwrap() * 100.0)
                     };
                     battery_output.charge_now_percentage = Some(string);
                 }
                 BatteryInfoName::ChargeFull => {
                     let string = if self.context.is_raw {
-                        main_battery.get_charge_full().to_string()
+                        battery.get_charge_full().to_string()
                     } else {
-                        format!("{}mAh", main_battery.get_charge_full() / 1000)
+                        format!("{}mAh", battery.get_charge_full() / 1000)
                     };
                     battery_output.charge_full = Some(string);
                 }
                 BatteryInfoName::CurrentNow => {
                     let string = if self.context.is_raw {
-                        main_battery.get_current_now().unwrap().to_string()
+                        battery.get_current_now().unwrap().to_string()
                     } else {
-                        format!("{}mA", main_battery.get_current_now().unwrap() / 1000)
+                        format!("{}mA", battery.get_current_now().unwrap() / 1000)
                     };
                     battery_output.current_now = Some(string);
                 }
                 BatteryInfoName::TimeRemaining => {
                     let string = if self.context.is_raw {
-                        main_battery.get_time_remaining().unwrap().to_string()
+                        battery.get_time_remaining().unwrap().to_string()
                     } else {
-                        let timestamp = match main_battery.get_status().unwrap() {
+                        let timestamp = match battery.get_status().unwrap() {
                             BatteryStatus::Full
                             | BatteryStatus::NotCharging
                             | BatteryStatus::Unknown => Timestamp::default(),
                             BatteryStatus::Charging | BatteryStatus::Discharging => {
-                                main_battery.get_time_remaining().unwrap().as_timestamp()
+                                battery.get_time_remaining().unwrap().as_timestamp()
                             }
                         };
                         timestamp.to_string()
@@ -244,12 +247,9 @@ impl<'a> BatterySubcommand<'a> {
                     battery_output.time_remaining = Some(string);
                 }
                 BatteryInfoName::Status => {
-                    battery_output.status = Some(main_battery.get_status().unwrap().to_string());
+                    battery_output.status = Some(battery.get_status().unwrap().to_string());
                 }
             }
-            // if i < self.info_names.len() - 1 {
-            //     write!(output, "{}", self.context.separator).unwrap();
-            // }
         }
         serde_json::to_string(&battery_output).expect("always valid")
     }
