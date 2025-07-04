@@ -1,10 +1,10 @@
 use std::fmt::Write as _;
 use std::time::Instant;
-use std::{sync::mpsc, thread, time::Duration};
+use std::{sync::mpsc, time::Duration};
 
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
 use gi_battery::{
-    Batteries, BatteryInfoName, BatteryStatus, DurationExt, Timestamp, get_main_battery_name,
+    AsTimestamp, Batteries, BatteryInfoName, BatteryStatus, Timestamp, get_main_battery_name,
 };
 use notify::{Config, Event, PollWatcher, RecursiveMode, Watcher};
 
@@ -61,34 +61,37 @@ pub fn cli() -> Command {
         )
 }
 
-// TODO: proper error handling
-// TODO: move a lot of the things here to the gi_battery crate
-pub fn exec(args: &ArgMatches) {
-    let is_raw = args.get_one::<bool>("raw").unwrap();
-    let batteries = Batteries::init().unwrap();
-    let default_battery_name = get_main_battery_name().unwrap();
-    let battery_name = args
-        .get_one::<String>("name")
-        .unwrap_or(&default_battery_name);
+// struct BatteryContext {
+//     pub info_names: Vec<BatteryInfoName>,
+//     pub battery_names: Vec<String>,
+//     pub is_raw: bool,
+// }
 
-    let separator = args
-        .get_one::<String>("separator")
-        .expect("has a default value");
+struct BatterySubcommand<'a> {
+    batteries: Batteries,
+    info_names: &'a Vec<&'a BatteryInfoName>,
+}
 
-    let input_info_names = parse_info_names(args);
+impl<'a> BatterySubcommand<'a> {
+    fn init(batteries: Batteries, info_names: &'a Vec<&'a BatteryInfoName>) -> Self {
+        Self {
+            batteries,
+            info_names,
+        }
+    }
 
-    if args.get_flag("watch") {
+    fn watch(&mut self, is_raw: bool, battery_name: &str, separator: &str) {
         let (tx, rx) = mpsc::channel::<notify::Result<Event>>();
         let config = Config::default()
             .with_compare_contents(true)
-            .with_poll_interval(Duration::from_secs(1));
+            .with_poll_interval(Duration::from_secs_f64(0.1));
 
         let mut watcher = PollWatcher::new(tx, config).unwrap();
 
-        let path = &batteries.get_battery(battery_name).unwrap().path;
+        let path = &self.batteries.get_battery(battery_name).unwrap().path;
 
         // TODO: better way to decide what files to watch
-        for info_name in &input_info_names {
+        for info_name in self.info_names {
             match info_name {
                 BatteryInfoName::ChargeNow | BatteryInfoName::ChargeNowPercentage => watcher
                     .watch(&path.join("charge_now"), RecursiveMode::NonRecursive)
@@ -116,13 +119,7 @@ pub fn exec(args: &ArgMatches) {
             }
         }
 
-        let mut previous_output = format_output(
-            &batteries,
-            &input_info_names,
-            battery_name,
-            separator,
-            *is_raw,
-        );
+        let mut previous_output = self.output(is_raw, separator);
         println!("{}", previous_output);
 
         // TODO: find a better way to prevent outputting redundant values other than checking it
@@ -134,13 +131,7 @@ pub fn exec(args: &ArgMatches) {
             let time_outputted_now = Instant::now();
 
             if time_last_outputted.elapsed().as_millis() > 0 {
-                let output = format_output(
-                    &batteries,
-                    &input_info_names,
-                    battery_name,
-                    separator,
-                    *is_raw,
-                );
+                let output = self.output(is_raw, separator);
                 if previous_output != output {
                     println!("{}", output);
                     previous_output = output;
@@ -148,155 +139,115 @@ pub fn exec(args: &ArgMatches) {
             }
             time_last_outputted = time_outputted_now
         }
-    } else if let Some(milliseconds) = args.get_one::<u64>("poll") {
+    }
+
+    fn poll(&self, milliseconds: u64, is_raw: bool, separator: &str) {
+        let duration = Duration::from_millis(milliseconds);
         loop {
-            println!(
-                "{}",
-                format_output(
-                    &batteries,
-                    &input_info_names,
-                    battery_name,
-                    separator,
-                    *is_raw
-                )
-            );
-            thread::sleep(Duration::from_millis(*milliseconds));
+            self.output(is_raw, separator);
+            std::thread::sleep(duration);
         }
-    } else {
-        println!(
-            "{}",
-            format_output(
-                &batteries,
-                &input_info_names,
-                battery_name,
-                separator,
-                *is_raw
-            )
-        );
+    }
+
+    fn output(&self, is_raw: bool, separator: &str) -> String {
+        let mut output = String::with_capacity(5);
+        let main_battery = self.batteries.get_main_battery().unwrap();
+        for (i, info_name) in self.info_names.iter().enumerate() {
+            match info_name {
+                BatteryInfoName::ChargeNow => {
+                    if is_raw {
+                        write!(output, "{}", main_battery.get_charge_now().unwrap()).unwrap();
+                    } else {
+                        write!(output, "{}mAh", main_battery.get_charge_now().unwrap() / 1000).unwrap();
+                    }
+                }
+                BatteryInfoName::ChargeNowPercentage => {
+                    if is_raw {
+                        write!(
+                            output,
+                            "{}",
+                            main_battery.get_charge_now_percentage().unwrap()
+                        )
+                        .unwrap();
+                    } else {
+                        write!(
+                            output,
+                            "{}%",
+                            main_battery.get_charge_now_percentage().unwrap() * 100.0
+                        )
+                        .unwrap();
+                    }
+                }
+                BatteryInfoName::ChargeFull => {
+                    if is_raw {
+                        write!(output, "{}", main_battery.get_charge_full()).unwrap();
+                    } else {
+                        write!(output, "{}mAh", main_battery.get_charge_full() / 1000).unwrap();
+                    }
+                }
+                BatteryInfoName::CurrentNow => {
+                    if is_raw {
+                        write!(output, "{}", main_battery.get_current_now().unwrap()).unwrap();
+                    } else {
+                        write!(
+                            output,
+                            "{}mA",
+                            main_battery.get_current_now().unwrap() / 1000
+                        )
+                        .unwrap();
+                    }
+                }
+                BatteryInfoName::TimeRemaining => {
+                    if is_raw {
+                        write!(output, "{}", main_battery.get_time_remaining().unwrap()).unwrap();
+                    } else {
+                        let timestamp = match main_battery.get_status().unwrap() {
+                            BatteryStatus::Full | BatteryStatus::NotCharging => {
+                                Timestamp::default()
+                            }
+                            BatteryStatus::Charging | BatteryStatus::Discharging => {
+                                main_battery.get_time_remaining().unwrap().as_timestamp()
+                            }
+                        };
+                        write!(output, "{}", timestamp).unwrap();
+                    }
+                }
+                BatteryInfoName::Status => {
+                    write!(output, "{}", main_battery.get_status().unwrap()).unwrap();
+                }
+            }
+            if i < self.info_names.len() - 1 {
+                write!(output, "{}", separator).unwrap();
+            }
+        }
+        output
     }
 }
 
-// TODO: find a better way to do this
-#[inline]
-fn format_output(
-    batteries: &Batteries,
-    info_names: &Vec<&BatteryInfoName>,
-    battery_name: &str,
-    separator: &str,
-    is_raw: bool,
-) -> String {
-    let mut output = String::with_capacity(5);
-    for (i, info_name) in info_names.iter().enumerate() {
-        match info_name {
-            BatteryInfoName::ChargeNow => {
-                if is_raw {
-                    write!(
-                        output,
-                        "{}",
-                        batteries.get_charge_now_single(battery_name).unwrap()
-                    )
-                    .unwrap();
-                } else {
-                    write!(
-                        output,
-                        "{}mAh",
-                        batteries.get_charge_now_single(battery_name).unwrap() / 1000
-                    )
-                    .unwrap();
-                }
-            }
-            BatteryInfoName::ChargeNowPercentage => {
-                if is_raw {
-                    write!(
-                        output,
-                        "{}",
-                        batteries
-                            .get_charge_percentage_single(battery_name)
-                            .unwrap()
-                    )
-                    .unwrap();
-                } else {
-                    write!(
-                        output,
-                        "{}%",
-                        batteries
-                            .get_charge_percentage_single(battery_name)
-                            .unwrap()
-                            * 100.0
-                    )
-                    .unwrap();
-                }
-            }
-            BatteryInfoName::ChargeFull => {
-                if is_raw {
-                    write!(
-                        output,
-                        "{}",
-                        batteries.get_charge_full_single(battery_name).unwrap()
-                    )
-                    .unwrap();
-                } else {
-                    write!(
-                        output,
-                        "{}mAh",
-                        batteries.get_charge_full_single(battery_name).unwrap() / 1000
-                    )
-                    .unwrap();
-                }
-            }
-            BatteryInfoName::CurrentNow => {
-                if is_raw {
-                    write!(
-                        output,
-                        "{}",
-                        batteries.get_current_now_single(battery_name).unwrap()
-                    )
-                    .unwrap();
-                } else {
-                    write!(
-                        output,
-                        "{}mA",
-                        batteries.get_current_now_single(battery_name).unwrap() / 1000
-                    )
-                    .unwrap();
-                }
-            }
-            BatteryInfoName::TimeRemaining => {
-                if is_raw {
-                    write!(
-                        output,
-                        "{}",
-                        batteries
-                            .get_time_remaining_single(battery_name)
-                            .unwrap()
-                            .as_secs()
-                    )
-                    .unwrap();
-                } else {
-                    let timestamp = match batteries.get_status_single(battery_name).unwrap() {
-                        BatteryStatus::Full | BatteryStatus::NotCharging => Timestamp::default(),
-                        BatteryStatus::Charging | BatteryStatus::Discharging => batteries
-                            .get_time_remaining_single(battery_name)
-                            .unwrap()
-                            .display_as_timestamp(),
-                    };
-                    write!(output, "{}", timestamp).unwrap();
-                }
-            }
-            BatteryInfoName::Status => {
-                write!(
-                    output,
-                    "{}",
-                    batteries.get_status_single(battery_name).unwrap()
-                )
-                .unwrap();
-            }
-        }
-        if i < info_names.len() - 1 {
-            write!(output, "{}", separator).unwrap();
-        }
+// TODO: proper error handling
+// TODO: move a lot of the things here to the gi_battery crate
+pub fn exec(args: &ArgMatches) {
+    let is_raw = args.get_one::<bool>("raw").unwrap();
+    let batteries = Batteries::init().unwrap();
+    let default_battery_name = get_main_battery_name().unwrap();
+    let battery_name = args
+        .get_one::<String>("name")
+        .unwrap_or(&default_battery_name);
+
+    let separator = args
+        .get_one::<String>("separator")
+        .expect("has a default value");
+
+    let input_info_names = parse_info_names(args);
+    let mut battery_subcommand = BatterySubcommand::init(batteries, &input_info_names);
+
+    if args.get_flag("watch") {
+        battery_subcommand.watch(*is_raw, battery_name, separator);
+    } else if let Some(milliseconds) = args.get_one::<u64>("poll") {
+        battery_subcommand.poll(*milliseconds, *is_raw, separator)
+    } else {
+        println!("{}", battery_subcommand.output(*is_raw, separator));
     }
-    output
 }
 
 pub fn parse_info_names(matches: &ArgMatches) -> Vec<&BatteryInfoName> {

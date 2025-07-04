@@ -1,28 +1,30 @@
-use std::{fmt::Display, fs, path::PathBuf, str::FromStr, time::Duration};
+use std::{fmt::Display, fs, io, path::PathBuf, str::FromStr};
 
 use gi_core::Error;
 
 const SYS_BATTERIES_PATH: &str = "/sys/class/power_supply";
 
 type Percentage = f32;
-type AmpereHours = i32;
-type Ampere = i32;
+type MilliAmpHours = i32;
+type MilliAmp = i32;
+type Seconds = u64;
 
 pub struct Batteries {
+    pub main_battery_name: String,
     items: Vec<Battery>,
 }
 
 pub struct Battery {
     pub path: PathBuf,
     pub name: String,
-    pub charge_full: AmpereHours,
+    pub charge_full: MilliAmpHours,
 }
 
 #[derive(Clone, Eq, PartialEq)]
 pub enum BatteryInfoName {
+    ChargeFull,
     ChargeNow,
     ChargeNowPercentage,
-    ChargeFull,
     CurrentNow,
     Status,
     TimeRemaining,
@@ -34,6 +36,46 @@ pub enum BatteryStatus {
     Charging,
     NotCharging,
     Discharging,
+}
+
+impl Battery {
+    pub fn get_charge_full(&self) -> MilliAmpHours {
+        self.charge_full
+    }
+
+    pub fn get_charge_now(&self) -> Result<MilliAmpHours, Error> {
+        Ok(self
+            .read_from_sysfs("charge_now")?
+            .parse::<MilliAmpHours>()?)
+    }
+
+    pub fn get_charge_now_percentage(&self) -> Result<Percentage, Error> {
+        Ok(self.get_charge_now()? as f32 / self.get_charge_full() as f32)
+    }
+
+    pub fn get_current_now(&self) -> Result<MilliAmp, Error> {
+        Ok(self.read_from_sysfs("current_now")?.parse::<MilliAmp>()?)
+    }
+
+    pub fn get_status(&self) -> Result<BatteryStatus, Error> {
+        self.read_from_sysfs("status")?.parse::<BatteryStatus>()
+    }
+
+    pub fn get_time_remaining(&self) -> Result<Seconds, Error> {
+        let hours = self.get_charge_now()? as f32 / self.get_current_now()? as f32;
+        if hours.is_infinite() {
+            return Ok(0);
+        }
+        let secs = hours * 3600.0;
+
+        // Discard milliseconds
+        Ok(secs as u64)
+    }
+
+    fn read_from_sysfs(&self, file_name: &str) -> io::Result<String> {
+        let file_path = self.path.join(file_name);
+        Ok(fs::read_to_string(file_path)?.trim_end().to_string())
+    }
 }
 
 impl Batteries {
@@ -64,7 +106,7 @@ impl Batteries {
 
             let charge_full = fs::read_to_string(path.join("charge_full"))?
                 .trim_end()
-                .parse::<AmpereHours>()?;
+                .parse::<MilliAmpHours>()?;
 
             battery_infos.push(Battery {
                 path,
@@ -79,68 +121,22 @@ impl Batteries {
             })
         } else {
             Ok(Batteries {
+                main_battery_name: get_main_battery_name()?,
                 items: battery_infos,
             })
         }
     }
 
-    pub fn get_battery(&self, battery_name: &str) -> Result<&Battery, Error> {
-        if let Some(battery) = self
-            .items
+    pub fn get_main_battery(&self) -> Option<&Battery> {
+        self.items
+            .iter()
+            .find(|battery| battery.name == *self.main_battery_name)
+    }
+
+    pub fn get_battery(&self, battery_name: &str) -> Option<&Battery> {
+        self.items
             .iter()
             .find(|battery| battery.name == *battery_name)
-        {
-            return Ok(battery);
-        }
-        Err(Error::BatteryNotFound {
-            name: battery_name.to_string(),
-        })
-    }
-
-    pub fn get_charge_full_single(&self, battery_name: &str) -> Result<AmpereHours, Error> {
-        Ok(self.get_battery(battery_name)?.charge_full)
-    }
-
-    pub fn get_charge_now_single(&self, battery_name: &str) -> Result<AmpereHours, Error> {
-        Ok(
-            fs::read_to_string(self.get_battery(battery_name)?.path.join("charge_now"))?
-                .trim_end()
-                .parse::<AmpereHours>()?,
-        )
-    }
-
-    /// Percentage from 0.0 to 1.0 inclusive
-    pub fn get_charge_percentage_single(&self, battery_name: &str) -> Result<Percentage, Error> {
-        let battery = self.get_battery(battery_name)?;
-        let charge_full = battery.charge_full as Percentage;
-        let charge = (self.get_charge_now_single(battery_name)?) as Percentage;
-        Ok(charge / charge_full)
-    }
-
-    pub fn get_status_single(&self, battery_name: &str) -> Result<BatteryStatus, Error> {
-        fs::read_to_string(self.get_battery(battery_name)?.path.join("status"))?
-            .trim_end()
-            .parse::<BatteryStatus>()
-    }
-
-    pub fn get_current_now_single(&self, battery_name: &str) -> Result<Ampere, Error> {
-        Ok(
-            fs::read_to_string(self.get_battery(battery_name)?.path.join("current_now"))?
-                .trim_end()
-                .parse::<Ampere>()?,
-        )
-    }
-
-    pub fn get_time_remaining_single(&self, battery_name: &str) -> Result<Duration, Error> {
-        let charge_now = self.get_charge_now_single(battery_name)?;
-        let current_now = self.get_current_now_single(battery_name)?;
-        let hours = charge_now as f32 / current_now as f32;
-        if hours.is_finite() {
-            let secs = hours * 3600.0;
-            Ok(Duration::from_secs_f32(secs))
-        } else {
-            Ok(Duration::default())
-        }
     }
 }
 
@@ -161,22 +157,15 @@ impl Display for Timestamp {
     }
 }
 
-pub trait DurationExt {
-    fn from_hours_f64(hours: f64) -> Duration;
-    fn display_as_timestamp(&self) -> Timestamp;
+pub trait AsTimestamp {
+    fn as_timestamp(&self) -> Timestamp;
 }
 
-impl DurationExt for Duration {
-    fn from_hours_f64(hours: f64) -> Duration {
-        Duration::from_secs_f64(hours * 3600.0)
-    }
-
-    fn display_as_timestamp(&self) -> Timestamp {
-        let total_secs = self.as_secs();
-
-        let hours = total_secs / 3600;
-        let minutes = total_secs / 60 % 60;
-        let seconds = total_secs % 60;
+impl AsTimestamp for Seconds {
+    fn as_timestamp(&self) -> Timestamp {
+        let hours = self / 3600;
+        let minutes = self / 60 % 60;
+        let seconds = self % 60;
 
         Timestamp {
             hours,
@@ -260,6 +249,20 @@ impl Display for BatteryStatus {
             BatteryStatus::Charging => write!(f, "Charging"),
             BatteryStatus::Discharging => write!(f, "Discharging"),
             BatteryStatus::NotCharging => write!(f, "Not Charging"),
+        }
+    }
+}
+
+impl BatteryInfoName {
+    pub fn files_to_watch(&self) -> Vec<&str> {
+        match self {
+            // No need to watch charge_full
+            BatteryInfoName::ChargeFull => Vec::new(),
+            BatteryInfoName::ChargeNow => vec!["charge_now"],
+            BatteryInfoName::ChargeNowPercentage => vec!["charge_now"],
+            BatteryInfoName::CurrentNow => vec!["current_now"],
+            BatteryInfoName::Status => vec!["status"],
+            BatteryInfoName::TimeRemaining => vec!["charge_now", "current_now"],
         }
     }
 }
