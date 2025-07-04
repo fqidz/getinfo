@@ -8,6 +8,24 @@ use gi_battery::{
 };
 use notify::{Config, Event, PollWatcher, RecursiveMode, Watcher};
 
+pub trait BatteryInfoNameExt {
+    fn files_to_watch(&self) -> Vec<&str>;
+}
+
+impl BatteryInfoNameExt for BatteryInfoName {
+    fn files_to_watch(&self) -> Vec<&str> {
+        match self {
+            // No need to watch charge_full
+            BatteryInfoName::ChargeFull => Vec::new(),
+            BatteryInfoName::ChargeNow => vec!["charge_now"],
+            BatteryInfoName::ChargeNowPercentage => vec!["charge_now"],
+            BatteryInfoName::CurrentNow => vec!["current_now"],
+            BatteryInfoName::Status => vec!["status"],
+            BatteryInfoName::TimeRemaining => vec!["charge_now", "current_now"],
+        }
+    }
+}
+
 pub fn cli() -> Command {
     Command::new("battery")
         .about("Scripts for battery info")
@@ -88,68 +106,39 @@ impl<'a> BatterySubcommand<'a> {
 
         let mut watcher = PollWatcher::new(tx, config).unwrap();
 
-        let path = &self.batteries.get_battery(battery_name).unwrap().path;
+        let battery_path = &self.batteries.get_battery(battery_name).unwrap().path;
 
-        // TODO: better way to decide what files to watch
-        for info_name in self.info_names {
-            match info_name {
-                BatteryInfoName::ChargeNow | BatteryInfoName::ChargeNowPercentage => watcher
-                    .watch(&path.join("charge_now"), RecursiveMode::NonRecursive)
-                    .unwrap(),
-                BatteryInfoName::ChargeFull => { /* no-op */ }
-                BatteryInfoName::CurrentNow => {
-                    watcher
-                        .watch(&path.join("current_now"), RecursiveMode::NonRecursive)
-                        .unwrap();
-                }
-                BatteryInfoName::Status => watcher
-                    .watch(&path.join("status"), RecursiveMode::NonRecursive)
-                    .unwrap(),
-                BatteryInfoName::TimeRemaining => {
-                    watcher
-                        .watch(&path.join("charge_now"), RecursiveMode::NonRecursive)
-                        .unwrap();
-                    watcher
-                        .watch(&path.join("current_now"), RecursiveMode::NonRecursive)
-                        .unwrap();
-                    watcher
-                        .watch(&path.join("status"), RecursiveMode::NonRecursive)
-                        .unwrap();
-                }
+        for info_name in self.info_names.iter() {
+            for file_path in info_name.files_to_watch() {
+                watcher
+                    .watch(&battery_path.join(file_path), RecursiveMode::NonRecursive)
+                    .unwrap();
             }
         }
 
-        let mut previous_output = self.output(is_raw, separator);
+        let mut previous_output = self.get_output_string(is_raw, separator);
         println!("{}", previous_output);
 
         // TODO: find a better way to prevent outputting redundant values other than checking it
         // with the previous output
-        let mut time_last_outputted = Instant::now();
         for _res in rx {
-            // prevent outputs in quick succession, such as when percentage reaches '100', it also
-            // updates status from 'Charging' to 'Full'
-            let time_outputted_now = Instant::now();
-
-            if time_last_outputted.elapsed().as_millis() > 0 {
-                let output = self.output(is_raw, separator);
-                if previous_output != output {
-                    println!("{}", output);
-                    previous_output = output;
-                }
+            let output = self.get_output_string(is_raw, separator);
+            if previous_output != output {
+                println!("{}", output);
+                previous_output = output;
             }
-            time_last_outputted = time_outputted_now
         }
     }
 
     fn poll(&self, milliseconds: u64, is_raw: bool, separator: &str) {
         let duration = Duration::from_millis(milliseconds);
         loop {
-            self.output(is_raw, separator);
+            println!("{}", self.get_output_string(is_raw, separator));
             std::thread::sleep(duration);
         }
     }
 
-    fn output(&self, is_raw: bool, separator: &str) -> String {
+    fn get_output_string(&self, is_raw: bool, separator: &str) -> String {
         let mut output = String::with_capacity(5);
         let main_battery = self.batteries.get_main_battery().unwrap();
         for (i, info_name) in self.info_names.iter().enumerate() {
@@ -158,7 +147,12 @@ impl<'a> BatterySubcommand<'a> {
                     if is_raw {
                         write!(output, "{}", main_battery.get_charge_now().unwrap()).unwrap();
                     } else {
-                        write!(output, "{}mAh", main_battery.get_charge_now().unwrap() / 1000).unwrap();
+                        write!(
+                            output,
+                            "{}mAh",
+                            main_battery.get_charge_now().unwrap() / 1000
+                        )
+                        .unwrap();
                     }
                 }
                 BatteryInfoName::ChargeNowPercentage => {
@@ -202,9 +196,9 @@ impl<'a> BatterySubcommand<'a> {
                         write!(output, "{}", main_battery.get_time_remaining().unwrap()).unwrap();
                     } else {
                         let timestamp = match main_battery.get_status().unwrap() {
-                            BatteryStatus::Full | BatteryStatus::NotCharging | BatteryStatus::Unknown => {
-                                Timestamp::default()
-                            }
+                            BatteryStatus::Full
+                            | BatteryStatus::NotCharging
+                            | BatteryStatus::Unknown => Timestamp::default(),
                             BatteryStatus::Charging | BatteryStatus::Discharging => {
                                 main_battery.get_time_remaining().unwrap().as_timestamp()
                             }
@@ -246,7 +240,10 @@ pub fn exec(args: &ArgMatches) {
     } else if let Some(milliseconds) = args.get_one::<u64>("poll") {
         battery_subcommand.poll(*milliseconds, *is_raw, separator)
     } else {
-        println!("{}", battery_subcommand.output(*is_raw, separator));
+        println!(
+            "{}",
+            battery_subcommand.get_output_string(*is_raw, separator)
+        );
     }
 }
 

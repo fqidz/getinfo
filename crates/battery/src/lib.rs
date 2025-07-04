@@ -258,20 +258,6 @@ impl Display for BatteryStatus {
     }
 }
 
-impl BatteryInfoName {
-    pub fn files_to_watch(&self) -> Vec<&str> {
-        match self {
-            // No need to watch charge_full
-            BatteryInfoName::ChargeFull => Vec::new(),
-            BatteryInfoName::ChargeNow => vec!["charge_now"],
-            BatteryInfoName::ChargeNowPercentage => vec!["charge_now"],
-            BatteryInfoName::CurrentNow => vec!["current_now"],
-            BatteryInfoName::Status => vec!["status"],
-            BatteryInfoName::TimeRemaining => vec!["charge_now", "current_now"],
-        }
-    }
-}
-
 impl FromStr for BatteryInfoName {
     type Err = Error;
 
