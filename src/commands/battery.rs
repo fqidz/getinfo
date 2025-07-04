@@ -92,7 +92,11 @@ struct BatterySubcommand<'a> {
 }
 
 impl<'a> BatterySubcommand<'a> {
-    fn init(batteries: Batteries, info_names: &'a Vec<&'a BatteryInfoName>, context: BatteryContext) -> Self {
+    fn init(
+        batteries: Batteries,
+        info_names: &'a Vec<&'a BatteryInfoName>,
+        context: BatteryContext,
+    ) -> Self {
         Self {
             batteries,
             info_names,
@@ -108,7 +112,11 @@ impl<'a> BatterySubcommand<'a> {
 
         let mut watcher = PollWatcher::new(tx, config).unwrap();
 
-        let battery_path = &self.batteries.get_battery(&self.context.battery_name).unwrap().path;
+        let battery_path = &self
+            .batteries
+            .get_battery(&self.context.battery_name)
+            .unwrap()
+            .path;
 
         // Although `notify` already handles duplicate watched files properly, we filter out duplicate
         // files just to avoid the extra calls to `watcher.watch(...)`. Have not tested if this is
@@ -243,21 +251,22 @@ pub fn exec(args: &ArgMatches) {
         .expect("has a default value");
 
     let input_info_names = parse_info_names(args);
-    let mut battery_subcommand = BatterySubcommand::init(batteries, &input_info_names, BatteryContext {
-        battery_name: battery_name.to_string(),
-        is_raw: *is_raw,
-        separator: separator.to_string(),
-    });
+    let mut battery_subcommand = BatterySubcommand::init(
+        batteries,
+        &input_info_names,
+        BatteryContext {
+            battery_name: battery_name.to_string(),
+            is_raw: *is_raw,
+            separator: separator.to_string(),
+        },
+    );
 
     if args.get_flag("watch") {
         battery_subcommand.watch();
     } else if let Some(milliseconds) = args.get_one::<u64>("poll") {
         battery_subcommand.poll(*milliseconds)
     } else {
-        println!(
-            "{}",
-            battery_subcommand.get_output_string()
-        );
+        println!("{}", battery_subcommand.get_output_string());
     }
 }
 
