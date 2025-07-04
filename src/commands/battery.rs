@@ -1,5 +1,5 @@
+use std::collections::HashSet;
 use std::fmt::Write as _;
-use std::time::Instant;
 use std::{sync::mpsc, time::Duration};
 
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
@@ -79,12 +79,6 @@ pub fn cli() -> Command {
         )
 }
 
-// struct BatteryContext {
-//     pub info_names: Vec<BatteryInfoName>,
-//     pub battery_names: Vec<String>,
-//     pub is_raw: bool,
-// }
-
 struct BatterySubcommand<'a> {
     batteries: Batteries,
     info_names: &'a Vec<&'a BatteryInfoName>,
@@ -108,12 +102,20 @@ impl<'a> BatterySubcommand<'a> {
 
         let battery_path = &self.batteries.get_battery(battery_name).unwrap().path;
 
+        // Although `notify` already handles duplicate watched files properly, we filter out duplicate
+        // files just to avoid the extra calls to `watcher.watch(...)`. Have not tested if this is
+        // faster/more efficient.
+        let mut files_to_watch = HashSet::new();
         for info_name in self.info_names.iter() {
-            for file_path in info_name.files_to_watch() {
-                watcher
-                    .watch(&battery_path.join(file_path), RecursiveMode::NonRecursive)
-                    .unwrap();
+            for filename in info_name.files_to_watch() {
+                files_to_watch.insert(filename);
             }
+        }
+
+        for filename in files_to_watch {
+            watcher
+                .watch(&battery_path.join(filename), RecursiveMode::NonRecursive)
+                .unwrap();
         }
 
         let mut previous_output = self.get_output_string(is_raw, separator);
