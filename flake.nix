@@ -16,6 +16,7 @@
         pkgs.rustfmt
         pkgs.clippy
         pkgs.cargo
+        pkgs.cargo-workspaces
 
         pkgs.hyperfine
         pkgs.upx
