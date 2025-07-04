@@ -250,7 +250,11 @@ pub fn exec(args: &ArgMatches) {
         .get_one::<String>("separator")
         .expect("has a default value");
 
-    let input_info_names = parse_info_names(args);
+    let input_info_names = args
+        .get_many::<BatteryInfoName>("info_names")
+        .expect("has a default value")
+        .collect::<Vec<_>>();
+
     let mut battery_subcommand = BatterySubcommand::init(
         batteries,
         &input_info_names,
@@ -268,11 +272,4 @@ pub fn exec(args: &ArgMatches) {
     } else {
         println!("{}", battery_subcommand.get_output_string());
     }
-}
-
-pub fn parse_info_names(matches: &ArgMatches) -> Vec<&BatteryInfoName> {
-    matches
-        .get_many::<BatteryInfoName>("info_names")
-        .expect("has a default value")
-        .collect::<Vec<_>>()
 }
