@@ -31,6 +31,7 @@ clap = { version = "4.5.40", features = ["cargo"]}
 dashmap = "6.1.0"
 futures-lite = "2.6.0"
 serde = "1.0.219"
+serde_json = "1.0.140"
 tokio = { version = "1.45.0", features = ["macros", "rt", "sync", "time"] }
 zbus = { version = "5.6.0", features = ["tokio"] }
 thiserror = "2.0.12"
@@ -45,6 +46,8 @@ notify = { workspace = true }
 gi_core = { workspace = true }
 gi_media_player = { workspace = true }
 gi_battery = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
 
 # https://github.com/uutils/coreutils/blob/56ce0e28ad830e276929d9e2f798fb55bbc5112c/Cargo.toml#L623
 # cargo clippy --all-targets --workspace --message-format=json --quiet \

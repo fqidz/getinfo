@@ -4,9 +4,10 @@ use std::{sync::mpsc, time::Duration};
 
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
 use gi_battery::{
-    AsTimestamp, Batteries, BatteryInfoName, BatteryStatus, Timestamp, get_main_battery_name,
+    get_main_battery_name, AsTimestamp, Batteries, BatteryInfoName, BatteryStatus, Timestamp
 };
 use notify::{Config, Event, PollWatcher, RecursiveMode, Watcher};
+use serde::Serialize;
 
 pub trait BatteryInfoNameExt {
     fn files_to_watch(&self) -> Vec<&str>;
@@ -73,9 +74,19 @@ pub fn cli() -> Command {
             Arg::new("separator")
                 .short('s')
                 .long("separator")
+                .conflicts_with("json")
                 .value_name("STRING")
                 .default_value(" ")
                 .help("Character or string to use for separating output infos"),
+        )
+        // TODO: make this into `--format` with choices: normal, json, json_pretty
+        .arg(
+            Arg::new("json")
+                .short('j')
+                .long("json")
+                .conflicts_with("separator")
+                .action(ArgAction::SetTrue)
+                .help("Formats output into json"),
         )
 }
 
@@ -83,6 +94,7 @@ struct BatteryContext {
     battery_name: String,
     is_raw: bool,
     separator: String,
+    do_output_json: bool,
 }
 
 struct BatterySubcommand<'a> {
@@ -90,6 +102,28 @@ struct BatterySubcommand<'a> {
     info_names: &'a Vec<&'a BatteryInfoName>,
     context: BatteryContext,
 }
+
+#[derive(Default, Serialize)]
+struct BatteryOutput {
+    #[serde(skip_serializing_if = "Option::is_none")]
+    charge_full: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    charge_now: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    charge_now_percentage: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    current_now: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    status: Option<String>,
+
+    #[serde(skip_serializing_if = "Option::is_none")]
+    time_remaining: Option<String>,
+}
+
 
 impl<'a> BatterySubcommand<'a> {
     fn init(
@@ -108,7 +142,7 @@ impl<'a> BatterySubcommand<'a> {
         let (tx, rx) = mpsc::channel::<notify::Result<Event>>();
         let config = Config::default()
             .with_compare_contents(true)
-            .with_poll_interval(Duration::from_secs_f64(0.1));
+            .with_poll_interval(Duration::from_secs_f64(0.2));
 
         let mut watcher = PollWatcher::new(tx, config).unwrap();
 
@@ -157,61 +191,45 @@ impl<'a> BatterySubcommand<'a> {
     }
 
     fn get_output_string(&self) -> String {
-        let mut output = String::with_capacity(5);
         let main_battery = self.batteries.get_main_battery().unwrap();
+        let mut battery_output = BatteryOutput::default();
         for (i, info_name) in self.info_names.iter().enumerate() {
             match info_name {
                 BatteryInfoName::ChargeNow => {
-                    if self.context.is_raw {
-                        write!(output, "{}", main_battery.get_charge_now().unwrap()).unwrap();
+                    let string = if self.context.is_raw {
+                        main_battery.get_charge_now().unwrap().to_string()
                     } else {
-                        write!(
-                            output,
-                            "{}mAh",
-                            main_battery.get_charge_now().unwrap() / 1000
-                        )
-                        .unwrap();
-                    }
+                        format!("{}mAh", main_battery.get_charge_now().unwrap() / 1000)
+                    };
+                    battery_output.charge_now = Some(string);
                 }
                 BatteryInfoName::ChargeNowPercentage => {
-                    if self.context.is_raw {
-                        write!(
-                            output,
-                            "{}",
-                            main_battery.get_charge_now_percentage().unwrap()
-                        )
-                        .unwrap();
+                    let string = if self.context.is_raw {
+                        main_battery.get_charge_now_percentage().unwrap().to_string()
                     } else {
-                        write!(
-                            output,
-                            "{}%",
-                            main_battery.get_charge_now_percentage().unwrap() * 100.0
-                        )
-                        .unwrap();
-                    }
+                        format!("{}%", main_battery.get_charge_now_percentage().unwrap() * 100.0)
+                    };
+                    battery_output.charge_now_percentage = Some(string);
                 }
                 BatteryInfoName::ChargeFull => {
-                    if self.context.is_raw {
-                        write!(output, "{}", main_battery.get_charge_full()).unwrap();
+                    let string = if self.context.is_raw {
+                        main_battery.get_charge_full().to_string()
                     } else {
-                        write!(output, "{}mAh", main_battery.get_charge_full() / 1000).unwrap();
-                    }
+                        format!("{}mAh", main_battery.get_charge_full() / 1000)
+                    };
+                    battery_output.charge_full = Some(string);
                 }
                 BatteryInfoName::CurrentNow => {
-                    if self.context.is_raw {
-                        write!(output, "{}", main_battery.get_current_now().unwrap()).unwrap();
+                    let string = if self.context.is_raw {
+                        main_battery.get_current_now().unwrap().to_string()
                     } else {
-                        write!(
-                            output,
-                            "{}mA",
-                            main_battery.get_current_now().unwrap() / 1000
-                        )
-                        .unwrap();
-                    }
+                        format!("{}mA", main_battery.get_current_now().unwrap() / 1000)
+                    };
+                    battery_output.current_now = Some(string);
                 }
                 BatteryInfoName::TimeRemaining => {
-                    if self.context.is_raw {
-                        write!(output, "{}", main_battery.get_time_remaining().unwrap()).unwrap();
+                    let string = if self.context.is_raw {
+                        main_battery.get_time_remaining().unwrap().to_string()
                     } else {
                         let timestamp = match main_battery.get_status().unwrap() {
                             BatteryStatus::Full
@@ -221,18 +239,19 @@ impl<'a> BatterySubcommand<'a> {
                                 main_battery.get_time_remaining().unwrap().as_timestamp()
                             }
                         };
-                        write!(output, "{}", timestamp).unwrap();
-                    }
+                        timestamp.to_string()
+                    };
+                    battery_output.time_remaining = Some(string);
                 }
                 BatteryInfoName::Status => {
-                    write!(output, "{}", main_battery.get_status().unwrap()).unwrap();
+                    battery_output.status = Some(main_battery.get_status().unwrap().to_string());
                 }
             }
-            if i < self.info_names.len() - 1 {
-                write!(output, "{}", self.context.separator).unwrap();
-            }
+            // if i < self.info_names.len() - 1 {
+            //     write!(output, "{}", self.context.separator).unwrap();
+            // }
         }
-        output
+        serde_json::to_string(&battery_output).expect("always valid")
     }
 }
 
@@ -240,6 +259,7 @@ impl<'a> BatterySubcommand<'a> {
 // TODO: move a lot of the things here to the gi_battery crate
 pub fn exec(args: &ArgMatches) {
     let is_raw = args.get_one::<bool>("raw").unwrap();
+    let do_output_json = args.get_one::<bool>("json").unwrap();
     let batteries = Batteries::init().unwrap();
     let default_battery_name = get_main_battery_name().unwrap();
     let battery_name = args
@@ -262,6 +282,7 @@ pub fn exec(args: &ArgMatches) {
             battery_name: battery_name.to_string(),
             is_raw: *is_raw,
             separator: separator.to_string(),
+            do_output_json: *do_output_json,
         },
     );
 
