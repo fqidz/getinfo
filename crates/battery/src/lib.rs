@@ -1,3 +1,5 @@
+// https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-class-power
+
 use std::{fmt::Display, fs, io, path::PathBuf, str::FromStr};
 
 use gi_core::Error;
@@ -5,8 +7,8 @@ use gi_core::Error;
 const SYS_BATTERIES_PATH: &str = "/sys/class/power_supply";
 
 type Percentage = f32;
-type MilliAmpHours = i32;
-type MilliAmp = i32;
+type MicroAmpHours = i32;
+type MicroAmp = i32;
 type Seconds = u64;
 
 pub struct Batteries {
@@ -17,7 +19,7 @@ pub struct Batteries {
 pub struct Battery {
     pub path: PathBuf,
     pub name: String,
-    pub charge_full: MilliAmpHours,
+    pub charge_full: MicroAmpHours,
 }
 
 #[derive(Clone, Eq, PartialEq)]
@@ -32,29 +34,30 @@ pub enum BatteryInfoName {
 
 #[derive(Eq, PartialEq)]
 pub enum BatteryStatus {
-    Full,
+    Unknown,
     Charging,
-    NotCharging,
     Discharging,
+    NotCharging,
+    Full,
 }
 
 impl Battery {
-    pub fn get_charge_full(&self) -> MilliAmpHours {
+    pub fn get_charge_full(&self) -> MicroAmpHours {
         self.charge_full
     }
 
-    pub fn get_charge_now(&self) -> Result<MilliAmpHours, Error> {
+    pub fn get_charge_now(&self) -> Result<MicroAmpHours, Error> {
         Ok(self
             .read_from_sysfs("charge_now")?
-            .parse::<MilliAmpHours>()?)
+            .parse::<MicroAmpHours>()?)
     }
 
     pub fn get_charge_now_percentage(&self) -> Result<Percentage, Error> {
         Ok(self.get_charge_now()? as f32 / self.get_charge_full() as f32)
     }
 
-    pub fn get_current_now(&self) -> Result<MilliAmp, Error> {
-        Ok(self.read_from_sysfs("current_now")?.parse::<MilliAmp>()?)
+    pub fn get_current_now(&self) -> Result<MicroAmp, Error> {
+        Ok(self.read_from_sysfs("current_now")?.parse::<MicroAmp>()?)
     }
 
     pub fn get_status(&self) -> Result<BatteryStatus, Error> {
@@ -62,7 +65,7 @@ impl Battery {
     }
 
     pub fn get_time_remaining(&self) -> Result<Seconds, Error> {
-        let hours = self.get_charge_now()? as f32 / self.get_current_now()? as f32;
+        let hours = (self.get_charge_now()? as f32 / self.get_current_now()? as f32).abs();
         if hours.is_infinite() {
             return Ok(0);
         }
@@ -106,7 +109,7 @@ impl Batteries {
 
             let charge_full = fs::read_to_string(path.join("charge_full"))?
                 .trim_end()
-                .parse::<MilliAmpHours>()?;
+                .parse::<MicroAmpHours>()?;
 
             battery_infos.push(Battery {
                 path,
@@ -231,10 +234,11 @@ impl FromStr for BatteryStatus {
 
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
+            "Unknown" => Ok(Self::Unknown),
             "Charging" => Ok(Self::Charging),
             "Discharging" => Ok(Self::Discharging),
+            "Not charging" => Ok(Self::NotCharging),
             "Full" => Ok(Self::Full),
-            "Not Charging" => Ok(Self::NotCharging),
             _ => Err(Self::Err::InvalidBatteryStatus {
                 status: s.to_string(),
             }),
@@ -248,7 +252,8 @@ impl Display for BatteryStatus {
             BatteryStatus::Full => write!(f, "Full"),
             BatteryStatus::Charging => write!(f, "Charging"),
             BatteryStatus::Discharging => write!(f, "Discharging"),
-            BatteryStatus::NotCharging => write!(f, "Not Charging"),
+            BatteryStatus::NotCharging => write!(f, "Not charging"),
+            BatteryStatus::Unknown => write!(f, "Unknown"),
         }
     }
 }

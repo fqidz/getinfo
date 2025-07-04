@@ -202,7 +202,7 @@ impl<'a> BatterySubcommand<'a> {
                         write!(output, "{}", main_battery.get_time_remaining().unwrap()).unwrap();
                     } else {
                         let timestamp = match main_battery.get_status().unwrap() {
-                            BatteryStatus::Full | BatteryStatus::NotCharging => {
+                            BatteryStatus::Full | BatteryStatus::NotCharging | BatteryStatus::Unknown => {
                                 Timestamp::default()
                             }
                             BatteryStatus::Charging | BatteryStatus::Discharging => {
