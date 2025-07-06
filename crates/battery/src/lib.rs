@@ -7,7 +7,7 @@ use serde::Serialize;
 
 const SYS_BATTERIES_PATH: &str = "/sys/class/power_supply";
 
-pub type Percentage = f32;
+pub type Capacity = f32;
 pub type MicroAmpHours = i32;
 pub type MicroAmp = i32;
 pub type Seconds = u64;
@@ -27,7 +27,7 @@ pub struct Battery {
 pub enum BatteryInfoName {
     ChargeFull,
     ChargeNow,
-    ChargeNowPercentage,
+    Capacity,
     CurrentNow,
     Status,
     TimeRemaining,
@@ -53,7 +53,7 @@ impl Battery {
             .parse::<MicroAmpHours>()?)
     }
 
-    pub fn get_charge_now_percentage(&self) -> Result<Percentage, Error> {
+    pub fn get_capacity(&self) -> Result<Capacity, Error> {
         Ok(self.get_charge_now()? as f32 / self.get_charge_full() as f32)
     }
 
@@ -272,11 +272,10 @@ impl FromStr for BatteryInfoName {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "charge_now" | "charge" => Ok(Self::ChargeNow),
-            "charge_now_percentage"
+            "capacity"
             | "charge_percentage"
-            | "now_percentage"
             | "percentage"
-            | "percent" => Ok(Self::ChargeNowPercentage),
+            | "percent" => Ok(Self::Capacity),
             "charge_full" => Ok(Self::ChargeFull),
             "current_now" | "current" => Ok(Self::CurrentNow),
             "time_remaining" | "remaining" | "time" => Ok(Self::TimeRemaining),

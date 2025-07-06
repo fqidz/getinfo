@@ -19,7 +19,7 @@ impl BatteryInfoNameExt for BatteryInfoName {
             // No need to watch charge_full
             BatteryInfoName::ChargeFull => Vec::new(),
             BatteryInfoName::ChargeNow => vec!["charge_now"],
-            BatteryInfoName::ChargeNowPercentage => vec!["charge_now"],
+            BatteryInfoName::Capacity => vec!["charge_now"],
             BatteryInfoName::CurrentNow => vec!["current_now"],
             BatteryInfoName::Status => vec!["status"],
             BatteryInfoName::TimeRemaining => vec!["charge_now", "current_now"],
@@ -36,8 +36,8 @@ pub fn cli() -> Command {
                 .action(ArgAction::Append)
                 .value_parser(value_parser!(BatteryInfoName))
                 .value_delimiter(',')
-                .default_value("percent,charge,charge_full,current_now,time_remaining,status")
-                .help("Specify which info(s) to get (e.g. 'charge_full,charge_percentage')"),
+                .default_value("capacity,charge,charge_full,current_now,time_remaining,status")
+                .help("Specify which info(s) to get (e.g. 'charge_full,capacity,status')"),
         )
         .arg(
             Arg::new("name")
@@ -79,7 +79,6 @@ pub fn cli() -> Command {
                 .default_value(" ")
                 .help("Character or string to use for separating output infos"),
         )
-        // TODO: make this into `--format` with choices: normal, json, json_pretty
         .arg(
             Arg::new("json")
                 .short('j')
@@ -107,7 +106,7 @@ struct BatterySubcommand<'a> {
 struct BatteryOutput {
     charge_full: Option<String>,
     charge_now: Option<String>,
-    charge_now_percentage: Option<String>,
+    capacity: Option<String>,
     current_now: Option<String>,
     status: Option<String>,
     time_remaining: Option<String>,
@@ -138,11 +137,11 @@ impl Serialize for BatteryOutput {
                 state.serialize_entry("charge_now", &v)?;
             }
         }
-        if let Some(v) = &self.charge_now_percentage {
+        if let Some(v) = &self.capacity {
             if let Ok(val) = v.parse::<f32>() {
-                state.serialize_entry("charge_now_percentage", &val)?;
+                state.serialize_entry("capacity", &val)?;
             } else {
-                state.serialize_entry("charge_now_percentage", &v)?;
+                state.serialize_entry("capacity", &v)?;
             }
         }
         if let Some(v) = &self.current_now {
@@ -248,13 +247,13 @@ impl<'a> BatterySubcommand<'a> {
                     };
                     battery_output.charge_now = Some(string);
                 }
-                BatteryInfoName::ChargeNowPercentage => {
+                BatteryInfoName::Capacity => {
                     let string = if self.context.is_raw {
-                        battery.get_charge_now_percentage().unwrap().to_string()
+                        battery.get_capacity().unwrap().to_string()
                     } else {
-                        format!("{}%", battery.get_charge_now_percentage().unwrap() * 100.0)
+                        format!("{}%", battery.get_capacity().unwrap() * 100.0)
                     };
-                    battery_output.charge_now_percentage = Some(string);
+                    battery_output.capacity = Some(string);
                 }
                 BatteryInfoName::ChargeFull => {
                     let string = if self.context.is_raw {
@@ -298,24 +297,22 @@ impl<'a> BatterySubcommand<'a> {
 }
 
 // TODO: proper error handling
-// TODO: move a lot of the things here to the gi_battery crate
 pub fn exec(args: &ArgMatches) {
-    let is_raw = args.get_one::<bool>("raw").unwrap();
-    let do_output_json = args.get_one::<bool>("json").unwrap();
-    let batteries = Batteries::init().unwrap();
+    let is_raw = args.get_one::<bool>("raw").expect("has a default value");
+    let separator = args
+        .get_one::<String>("separator")
+        .expect("has a default value");
+    let do_output_json = args.get_one::<bool>("json").expect("has a default value");
+    let input_info_names = args
+        .get_many::<BatteryInfoName>("info_names")
+        .expect("has a default value")
+        .collect::<Vec<_>>();
     let default_battery_name = get_main_battery_name().unwrap();
     let battery_name = args
         .get_one::<String>("name")
         .unwrap_or(&default_battery_name);
 
-    let separator = args
-        .get_one::<String>("separator")
-        .expect("has a default value");
-
-    let input_info_names = args
-        .get_many::<BatteryInfoName>("info_names")
-        .expect("has a default value")
-        .collect::<Vec<_>>();
+    let batteries = Batteries::init().unwrap();
 
     let mut battery_subcommand = BatterySubcommand::init(
         batteries,
