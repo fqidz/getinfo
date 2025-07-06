@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::str::FromStr;
 use std::{sync::mpsc, time::Duration};
 
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
@@ -47,13 +48,6 @@ pub fn cli() -> Command {
                 .help("Specify battery name in the case of multiple batteries (e.g. 'BAT1'). Defaults to lowest-numbered battery"),
         )
         .arg(
-            Arg::new("raw")
-                .short('r')
-                .long("raw")
-                .action(ArgAction::SetTrue)
-                .help("Output values as their raw values"),
-        )
-        .arg(
             Arg::new("watch")
                 .short('w')
                 .long("watch")
@@ -80,6 +74,15 @@ pub fn cli() -> Command {
                 .help("Character or string to use for separating output infos"),
         )
         .arg(
+            Arg::new("format_output")
+                .short('f')
+                .long("format-output")
+                .value_parser(value_parser!(FormatOutputType))
+                .value_name("FORMAT_TYPE")
+                .default_value("no_symbols")
+                .help("Specify how the output fields should be formatted"),
+        )
+        .arg(
             Arg::new("json")
                 .short('j')
                 .long("json")
@@ -89,76 +92,79 @@ pub fn cli() -> Command {
         )
 }
 
-struct BatteryContext {
+enum FieldValue {
+    I32(i32),
+    U64(u64),
+    F32(f32),
+    String(String),
+    Timestamp(Timestamp),
+}
+
+struct Field<'a> {
+    label: &'a str,
+    value: FieldValue,
+}
+
+impl<'a> Field<'a> {
+    pub fn new(label: &'a str, value: FieldValue) -> Self {
+        Self { label, value }
+    }
+}
+
+#[derive(Clone)]
+enum FormatOutputType {
+    Raw,
+    NoSymbols,
+    Formatted,
+}
+
+impl FromStr for FormatOutputType {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "raw" => Ok(Self::Raw),
+            "no_symbols" => Ok(Self::NoSymbols),
+            "formatted" => Ok(Self::Formatted),
+            _ => Err(format!("Invalid format-output type: {}", s)),
+        }
+    }
+}
+
+struct BatteryContext<'a> {
     battery_name: String,
-    is_raw: bool,
+    format_output: &'a FormatOutputType,
     separator: String,
-    do_output_json: bool,
+    output_as_json: bool,
 }
 
 struct BatterySubcommand<'a> {
     batteries: Batteries,
     info_names: &'a Vec<&'a BatteryInfoName>,
-    context: BatteryContext,
+    context: BatteryContext<'a>,
 }
 
 #[derive(Default)]
-struct BatteryOutput {
-    charge_full: Option<String>,
-    charge_now: Option<String>,
-    capacity: Option<String>,
-    current_now: Option<String>,
-    status: Option<String>,
-    time_remaining: Option<String>,
-}
+struct BatteryOutput<'a>(Vec<Field<'a>>);
 
 // Try to parse each of the fields as their actual type, and if that fails, fallback to the
 // original string. This is useful for, example, turning numbers into JSON numbers so that users
 // can do mathematical operations and what not.
 // TODO: Option for user to specify field key
 // TODO: Either turn this into a derive macro or convert the 'if let Some(v) ...' into a macro_rules
-impl Serialize for BatteryOutput {
+impl<'a> Serialize for BatteryOutput<'a> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
-        let mut state = serializer.serialize_map(None)?;
-        if let Some(v) = &self.charge_full {
-            if let Ok(val) = v.parse::<i32>() {
-                state.serialize_entry("charge_full", &val)?;
-            } else {
-                state.serialize_entry("charge_full", &v)?;
-            }
-        }
-        if let Some(v) = &self.charge_now {
-            if let Ok(val) = v.parse::<i32>() {
-                state.serialize_entry("charge_now", &val)?;
-            } else {
-                state.serialize_entry("charge_now", &v)?;
-            }
-        }
-        if let Some(v) = &self.capacity {
-            if let Ok(val) = v.parse::<f32>() {
-                state.serialize_entry("capacity", &val)?;
-            } else {
-                state.serialize_entry("capacity", &v)?;
-            }
-        }
-        if let Some(v) = &self.current_now {
-            if let Ok(val) = v.parse::<i32>() {
-                state.serialize_entry("current_now", &val)?;
-            } else {
-                state.serialize_entry("current_now", &v)?;
-            }
-        }
-        if let Some(v) = &self.status {
-            state.serialize_entry("status", &v)?;
-        }
-        if let Some(v) = &self.time_remaining {
-            if let Ok(val) = v.parse::<u64>() {
-                state.serialize_entry("time_remaining", &val)?;
-            } else {
-                state.serialize_entry("time_remaining", &v)?;
+        let mut state = serializer.serialize_map(Some(self.0.len()))?;
+        for field in &self.0 {
+            match &field.value {
+                FieldValue::I32(v) => state.serialize_entry(field.label, v)?,
+                FieldValue::U64(v) => state.serialize_entry(field.label, v)?,
+                FieldValue::F32(v) => state.serialize_entry(field.label, v)?,
+                FieldValue::String(v) => state.serialize_entry(field.label, v)?,
+                FieldValue::Timestamp(v) => state.serialize_entry(field.label, v)?,
             }
         }
         state.end()
@@ -169,7 +175,7 @@ impl<'a> BatterySubcommand<'a> {
     fn init(
         batteries: Batteries,
         info_names: &'a Vec<&'a BatteryInfoName>,
-        context: BatteryContext,
+        context: BatteryContext<'a>,
     ) -> Self {
         Self {
             batteries,
@@ -202,7 +208,7 @@ impl<'a> BatterySubcommand<'a> {
             }
         }
 
-        for filename in files_to_watch {
+        for filename in &files_to_watch {
             watcher
                 .watch(&battery_path.join(filename), RecursiveMode::NonRecursive)
                 .unwrap();
@@ -240,55 +246,77 @@ impl<'a> BatterySubcommand<'a> {
         for info_name in self.info_names.iter() {
             match info_name {
                 BatteryInfoName::ChargeNow => {
-                    let string = if self.context.is_raw {
-                        battery.get_charge_now().unwrap().to_string()
-                    } else {
-                        format!("{}mAh", battery.get_charge_now().unwrap() / 1000)
+                    let value = battery.get_charge_now().unwrap();
+                    let field_value = match self.context.format_output {
+                        FormatOutputType::Raw => FieldValue::I32(value),
+                        FormatOutputType::NoSymbols => FieldValue::I32(value / 1000),
+                        FormatOutputType::Formatted => {
+                            FieldValue::String(format!("{}mAh", value / 1000))
+                        }
                     };
-                    battery_output.charge_now = Some(string);
+                    let field = Field::new(info_name.as_str(), field_value);
+                    battery_output.0.push(field);
                 }
                 BatteryInfoName::Capacity => {
-                    let string = if self.context.is_raw {
-                        battery.get_capacity().unwrap().to_string()
-                    } else {
-                        format!("{}%", battery.get_capacity().unwrap() * 100.0)
+                    let value = battery.get_capacity().unwrap();
+                    let field_value = match self.context.format_output {
+                        FormatOutputType::Raw => FieldValue::F32(value),
+                        FormatOutputType::NoSymbols => FieldValue::F32(value * 100.0),
+                        FormatOutputType::Formatted => {
+                            FieldValue::String(format!("{}%", value * 100.0))
+                        }
                     };
-                    battery_output.capacity = Some(string);
+                    let field = Field::new(info_name.as_str(), field_value);
+                    battery_output.0.push(field);
                 }
                 BatteryInfoName::ChargeFull => {
-                    let string = if self.context.is_raw {
-                        battery.get_charge_full().to_string()
-                    } else {
-                        format!("{}mAh", battery.get_charge_full() / 1000)
+                    let value = battery.get_charge_full();
+                    let field_value = match self.context.format_output {
+                        FormatOutputType::Raw => FieldValue::I32(value),
+                        FormatOutputType::NoSymbols => FieldValue::I32(value / 1000),
+                        FormatOutputType::Formatted => {
+                            FieldValue::String(format!("{}mAh", value / 1000))
+                        }
                     };
-                    battery_output.charge_full = Some(string);
+                    let field = Field::new(info_name.as_str(), field_value);
+                    battery_output.0.push(field);
                 }
                 BatteryInfoName::CurrentNow => {
-                    let string = if self.context.is_raw {
-                        battery.get_current_now().unwrap().to_string()
-                    } else {
-                        format!("{}mA", battery.get_current_now().unwrap() / 1000)
+                    let value = battery.get_current_now().unwrap();
+                    let field_value = match self.context.format_output {
+                        FormatOutputType::Raw => FieldValue::I32(value),
+                        FormatOutputType::NoSymbols => FieldValue::I32(value / 1000),
+                        FormatOutputType::Formatted => {
+                            FieldValue::String(format!("{}mA", value / 1000))
+                        }
                     };
-                    battery_output.current_now = Some(string);
+                    let field = Field::new(info_name.as_str(), field_value);
+                    battery_output.0.push(field);
                 }
                 BatteryInfoName::TimeRemaining => {
-                    let string = if self.context.is_raw {
-                        battery.get_time_remaining().unwrap().to_string()
-                    } else {
-                        let timestamp = match battery.get_status().unwrap() {
-                            BatteryStatus::Full
-                            | BatteryStatus::NotCharging
-                            | BatteryStatus::Unknown => Timestamp::default(),
-                            BatteryStatus::Charging | BatteryStatus::Discharging => {
-                                battery.get_time_remaining().unwrap().as_timestamp()
-                            }
-                        };
-                        timestamp.to_string()
+                    let value = match battery.get_status().unwrap() {
+                        BatteryStatus::Unknown
+                        | BatteryStatus::NotCharging
+                        | BatteryStatus::Full => 0,
+                        BatteryStatus::Charging | BatteryStatus::Discharging => {
+                            battery.get_time_remaining().unwrap()
+                        }
                     };
-                    battery_output.time_remaining = Some(string);
+                    // battery.get_time_remaining().unwrap()
+                    let field_value = match self.context.format_output {
+                        FormatOutputType::Raw => FieldValue::U64(value),
+                        FormatOutputType::NoSymbols => FieldValue::Timestamp(value.as_timestamp()),
+                        FormatOutputType::Formatted => {
+                            FieldValue::String(value.as_timestamp().to_string())
+                        }
+                    };
+                    let field = Field::new(info_name.as_str(), field_value);
+                    battery_output.0.push(field);
                 }
                 BatteryInfoName::Status => {
-                    battery_output.status = Some(battery.get_status().unwrap().to_string());
+                    let field_value = FieldValue::String(battery.get_status().unwrap().to_string());
+                    let field = Field::new(info_name.as_str(), field_value);
+                    battery_output.0.push(field);
                 }
             }
         }
@@ -298,11 +326,13 @@ impl<'a> BatterySubcommand<'a> {
 
 // TODO: proper error handling
 pub fn exec(args: &ArgMatches) {
-    let is_raw = args.get_one::<bool>("raw").expect("has a default value");
+    let format_output = args
+        .get_one::<FormatOutputType>("format_output")
+        .expect("has a default value");
     let separator = args
         .get_one::<String>("separator")
         .expect("has a default value");
-    let do_output_json = args.get_one::<bool>("json").expect("has a default value");
+    let output_as_json = args.get_one::<bool>("json").expect("has a default value");
     let input_info_names = args
         .get_many::<BatteryInfoName>("info_names")
         .expect("has a default value")
@@ -319,9 +349,9 @@ pub fn exec(args: &ArgMatches) {
         &input_info_names,
         BatteryContext {
             battery_name: battery_name.to_string(),
-            is_raw: *is_raw,
+            format_output,
             separator: separator.to_string(),
-            do_output_json: *do_output_json,
+            output_as_json: *output_as_json,
         },
     );
 

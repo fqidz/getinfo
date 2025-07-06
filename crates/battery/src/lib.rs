@@ -254,14 +254,33 @@ impl FromStr for BatteryStatus {
     }
 }
 
+impl BatteryStatus {
+    pub fn as_str(&self) -> &'static str {
+        match self {
+            BatteryStatus::Full => "Full",
+            BatteryStatus::Charging => "Charging",
+            BatteryStatus::Discharging => "Discharging",
+            BatteryStatus::NotCharging => "Not charging",
+            BatteryStatus::Unknown => "Unknown",
+        }
+    }
+}
+
 impl Display for BatteryStatus {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.as_str())
+    }
+}
+
+impl BatteryInfoName {
+    pub fn as_str(&self) -> &'static str {
         match self {
-            BatteryStatus::Full => write!(f, "Full"),
-            BatteryStatus::Charging => write!(f, "Charging"),
-            BatteryStatus::Discharging => write!(f, "Discharging"),
-            BatteryStatus::NotCharging => write!(f, "Not charging"),
-            BatteryStatus::Unknown => write!(f, "Unknown"),
+            BatteryInfoName::ChargeFull => "charge_full",
+            BatteryInfoName::ChargeNow => "charge_now",
+            BatteryInfoName::Capacity => "capacity",
+            BatteryInfoName::CurrentNow => "current_now",
+            BatteryInfoName::Status => "status",
+            BatteryInfoName::TimeRemaining => "time_remaining",
         }
     }
 }
@@ -284,5 +303,11 @@ impl FromStr for BatteryInfoName {
                 name: s.to_string(),
             }),
         }
+    }
+}
+
+impl Display for BatteryInfoName {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(f, "{}", self.as_str())
     }
 }
