@@ -22,6 +22,8 @@ clap = { workspace = true }
 gi_core = { workspace = true }
 thiserror = { workspace = true }
 notify = { workspace = true }
+serde = { workspace = true }
+serde_json = { workspace = true }
 # dashmap = { workspace = true }
 # futures-lite = { workspace = true }
 # serde = { workspace = true }

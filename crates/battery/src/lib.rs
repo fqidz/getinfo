@@ -3,13 +3,14 @@
 use std::{fmt::Display, fs, io, path::PathBuf, str::FromStr};
 
 use gi_core::Error;
+use serde::Serialize;
 
 const SYS_BATTERIES_PATH: &str = "/sys/class/power_supply";
 
-type Percentage = f32;
-type MicroAmpHours = i32;
-type MicroAmp = i32;
-type Seconds = u64;
+pub type Percentage = f32;
+pub type MicroAmpHours = i32;
+pub type MicroAmp = i32;
+pub type Seconds = u64;
 
 pub struct Batteries {
     pub main_battery_name: String,
@@ -143,12 +144,19 @@ impl Batteries {
     }
 }
 
-#[derive(Default)]
+#[derive(Default, Serialize)]
 pub struct Timestamp {
+    #[serde(rename = "h")]
     hours: u64,
+
+    #[serde(rename = "m")]
     minutes: u8,
+
+    #[serde(rename = "s")]
     seconds: u8,
 }
+
+
 
 impl Display for Timestamp {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {

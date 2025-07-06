@@ -17,6 +17,7 @@
         pkgs.clippy
         pkgs.cargo
         pkgs.cargo-workspaces
+        pkgs.cargo-expand
 
         pkgs.hyperfine
         pkgs.upx

@@ -480,6 +480,8 @@ dependencies = [
  "clap",
  "gi_core",
  "notify",
+ "serde",
+ "serde_json",
  "thiserror",
 ]
 

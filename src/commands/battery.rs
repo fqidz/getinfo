@@ -1,5 +1,4 @@
 use std::collections::HashSet;
-use std::fmt::Write as _;
 use std::{sync::mpsc, time::Duration};
 
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
@@ -8,6 +7,7 @@ use gi_battery::{
 };
 use notify::{Config, Event, PollWatcher, RecursiveMode, Watcher};
 use serde::Serialize;
+use serde::ser::SerializeMap;
 
 pub trait BatteryInfoNameExt {
     fn files_to_watch(&self) -> Vec<&str>;
@@ -103,25 +103,67 @@ struct BatterySubcommand<'a> {
     context: BatteryContext,
 }
 
-#[derive(Default, Serialize)]
+#[derive(Default)]
 struct BatteryOutput {
-    #[serde(skip_serializing_if = "Option::is_none")]
     charge_full: Option<String>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
     charge_now: Option<String>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
     charge_now_percentage: Option<String>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
     current_now: Option<String>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
     status: Option<String>,
-
-    #[serde(skip_serializing_if = "Option::is_none")]
     time_remaining: Option<String>,
+}
+
+// Try to parse each of the fields as their actual type, and if that fails, fallback to the
+// original string. This is useful for, example, turning numbers into JSON numbers so that users
+// can do mathematical operations and what not.
+// TODO: Option for user to specify field key
+// TODO: Either turn this into a derive macro or convert the 'if let Some(v) ...' into a macro_rules
+impl Serialize for BatteryOutput {
+    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
+    where
+        S: serde::Serializer,
+    {
+        let mut state = serializer.serialize_map(None)?;
+        if let Some(v) = &self.charge_full {
+            if let Ok(val) = v.parse::<i32>() {
+                state.serialize_entry("charge_full", &val)?;
+            } else {
+                state.serialize_entry("charge_full", &v)?;
+            }
+        }
+        if let Some(v) = &self.charge_now {
+            if let Ok(val) = v.parse::<i32>() {
+                state.serialize_entry("charge_now", &val)?;
+            } else {
+                state.serialize_entry("charge_now", &v)?;
+            }
+        }
+        if let Some(v) = &self.charge_now_percentage {
+            if let Ok(val) = v.parse::<f32>() {
+                state.serialize_entry("charge_now_percentage", &val)?;
+            } else {
+                state.serialize_entry("charge_now_percentage", &v)?;
+            }
+        }
+        if let Some(v) = &self.current_now {
+            if let Ok(val) = v.parse::<i32>() {
+                state.serialize_entry("current_now", &val)?;
+            } else {
+                state.serialize_entry("current_now", &v)?;
+            }
+        }
+        if let Some(v) = &self.status {
+            state.serialize_entry("status", &v)?;
+        }
+        if let Some(v) = &self.time_remaining {
+            if let Ok(val) = v.parse::<u64>() {
+                state.serialize_entry("time_remaining", &val)?;
+            } else {
+                state.serialize_entry("time_remaining", &v)?;
+            }
+        }
+        state.end()
+    }
 }
 
 impl<'a> BatterySubcommand<'a> {
