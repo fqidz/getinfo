@@ -1,4 +1,5 @@
 use std::collections::HashSet;
+use std::fmt::Display;
 use std::str::FromStr;
 use std::{sync::mpsc, time::Duration};
 
@@ -153,6 +154,26 @@ struct BatteryOutput<'a> {
 impl<'a> BatteryOutput<'a> {
     pub fn new(fields: Vec<Field<'a>>, separator: Option<String>) -> Self {
         Self { fields, separator }
+    }
+}
+
+impl<'a> Display for BatteryOutput<'a> {
+    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
+        write!(
+            f,
+            "{}",
+            self.fields
+                .iter()
+                .map(|f| match &f.value {
+                    FieldValue::I32(v) => v.to_string(),
+                    FieldValue::U64(v) => v.to_string(),
+                    FieldValue::F32(v) => v.to_string(),
+                    FieldValue::String(v) => v.to_string(),
+                    FieldValue::Timestamp(timestamp) => timestamp.to_string(),
+                })
+                .collect::<Vec<_>>()
+                .join(&self.separator.clone().unwrap())
+        )
     }
 }
 
@@ -316,7 +337,12 @@ impl<'a> BatterySubcommand<'a> {
             let field = Field::new(info_name.as_str(), field_value);
             battery_output.fields.push(field);
         }
-        serde_json::to_string(&battery_output).expect("always valid")
+
+        if self.context.output_as_json {
+            serde_json::to_string(&battery_output).expect("always valid")
+        } else {
+            battery_output.to_string()
+        }
     }
 }
 
