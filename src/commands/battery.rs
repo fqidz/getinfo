@@ -145,21 +145,26 @@ struct BatterySubcommand<'a> {
 }
 
 #[derive(Default)]
-struct BatteryOutput<'a>(Vec<Field<'a>>);
+struct BatteryOutput<'a> {
+    fields: Vec<Field<'a>>,
+    separator: Option<String>,
+}
 
-// Try to parse each of the fields as their actual type, and if that fails, fallback to the
-// original string. This is useful for, example, turning numbers into JSON numbers so that users
-// can do mathematical operations and what not.
-// TODO: Option for user to specify field key
-// TODO: Either turn this into a derive macro or convert the 'if let Some(v) ...' into a macro_rules
+impl<'a> BatteryOutput<'a> {
+    pub fn new(fields: Vec<Field<'a>>, separator: Option<String>) -> Self {
+        Self { fields, separator }
+    }
+}
+
 impl<'a> Serialize for BatteryOutput<'a> {
     fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
     where
         S: serde::Serializer,
     {
-        let mut state = serializer.serialize_map(Some(self.0.len()))?;
-        for field in &self.0 {
+        let mut state = serializer.serialize_map(Some(self.fields.len()))?;
+        for field in &self.fields {
             match &field.value {
+                // TODO: fix duplicate code
                 FieldValue::I32(v) => state.serialize_entry(field.label, v)?,
                 FieldValue::U64(v) => state.serialize_entry(field.label, v)?,
                 FieldValue::F32(v) => state.serialize_entry(field.label, v)?,
@@ -242,56 +247,50 @@ impl<'a> BatterySubcommand<'a> {
             .get_battery(&self.context.battery_name)
             .unwrap();
 
-        let mut battery_output = BatteryOutput::default();
+        let mut battery_output =
+            BatteryOutput::new(Vec::with_capacity(1), Some(self.context.separator.clone()));
+
         for info_name in self.info_names.iter() {
-            match info_name {
+            let field_value = match info_name {
                 BatteryInfoName::ChargeNow => {
                     let value = battery.get_charge_now().unwrap();
-                    let field_value = match self.context.format_output {
+                    match self.context.format_output {
                         FormatOutputType::Raw => FieldValue::I32(value),
-                        FormatOutputType::NoSymbols => FieldValue::I32(value / 1000),
+                        FormatOutputType::NoSymbols => FieldValue::I32(value),
                         FormatOutputType::Formatted => {
-                            FieldValue::String(format!("{}mAh", value / 1000))
+                            FieldValue::String(format!("{}mAh", as_amps(value)))
                         }
-                    };
-                    let field = Field::new(info_name.as_str(), field_value);
-                    battery_output.0.push(field);
+                    }
                 }
                 BatteryInfoName::Capacity => {
                     let value = battery.get_capacity().unwrap();
-                    let field_value = match self.context.format_output {
+                    match self.context.format_output {
                         FormatOutputType::Raw => FieldValue::F32(value),
                         FormatOutputType::NoSymbols => FieldValue::F32(value * 100.0),
                         FormatOutputType::Formatted => {
                             FieldValue::String(format!("{}%", value * 100.0))
                         }
-                    };
-                    let field = Field::new(info_name.as_str(), field_value);
-                    battery_output.0.push(field);
+                    }
                 }
                 BatteryInfoName::ChargeFull => {
                     let value = battery.get_charge_full();
-                    let field_value = match self.context.format_output {
+                    match self.context.format_output {
                         FormatOutputType::Raw => FieldValue::I32(value),
-                        FormatOutputType::NoSymbols => FieldValue::I32(value / 1000),
+                        FormatOutputType::NoSymbols => FieldValue::I32(as_amps(value)),
                         FormatOutputType::Formatted => {
-                            FieldValue::String(format!("{}mAh", value / 1000))
+                            FieldValue::String(format!("{}mAh", as_amps(value)))
                         }
-                    };
-                    let field = Field::new(info_name.as_str(), field_value);
-                    battery_output.0.push(field);
+                    }
                 }
                 BatteryInfoName::CurrentNow => {
                     let value = battery.get_current_now().unwrap();
-                    let field_value = match self.context.format_output {
+                    match self.context.format_output {
                         FormatOutputType::Raw => FieldValue::I32(value),
-                        FormatOutputType::NoSymbols => FieldValue::I32(value / 1000),
+                        FormatOutputType::NoSymbols => FieldValue::I32(as_amps(value)),
                         FormatOutputType::Formatted => {
-                            FieldValue::String(format!("{}mA", value / 1000))
+                            FieldValue::String(format!("{}mA", as_amps(value)))
                         }
-                    };
-                    let field = Field::new(info_name.as_str(), field_value);
-                    battery_output.0.push(field);
+                    }
                 }
                 BatteryInfoName::TimeRemaining => {
                     let value = match battery.get_status().unwrap() {
@@ -302,23 +301,20 @@ impl<'a> BatterySubcommand<'a> {
                             battery.get_time_remaining().unwrap()
                         }
                     };
-                    // battery.get_time_remaining().unwrap()
-                    let field_value = match self.context.format_output {
+                    match self.context.format_output {
                         FormatOutputType::Raw => FieldValue::U64(value),
                         FormatOutputType::NoSymbols => FieldValue::Timestamp(value.as_timestamp()),
                         FormatOutputType::Formatted => {
                             FieldValue::String(value.as_timestamp().to_string())
                         }
-                    };
-                    let field = Field::new(info_name.as_str(), field_value);
-                    battery_output.0.push(field);
+                    }
                 }
                 BatteryInfoName::Status => {
-                    let field_value = FieldValue::String(battery.get_status().unwrap().to_string());
-                    let field = Field::new(info_name.as_str(), field_value);
-                    battery_output.0.push(field);
+                    FieldValue::String(battery.get_status().unwrap().to_string())
                 }
-            }
+            };
+            let field = Field::new(info_name.as_str(), field_value);
+            battery_output.fields.push(field);
         }
         serde_json::to_string(&battery_output).expect("always valid")
     }
@@ -362,4 +358,9 @@ pub fn exec(args: &ArgMatches) {
     } else {
         println!("{}", battery_subcommand.get_output_string());
     }
+}
+
+#[inline]
+fn as_amps(micro_amps: i32) -> i32 {
+    micro_amps / 1000
 }

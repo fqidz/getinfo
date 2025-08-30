@@ -1,9 +1,9 @@
 // https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-class-power
-
 use std::{fmt::Display, fs, io, path::PathBuf, str::FromStr};
 
 use gi_core::Error;
 use serde::Serialize;
+
 
 const SYS_BATTERIES_PATH: &str = "/sys/class/power_supply";
 
@@ -156,8 +156,6 @@ pub struct Timestamp {
     seconds: u8,
 }
 
-
-
 impl Display for Timestamp {
     fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
         write!(
@@ -291,10 +289,7 @@ impl FromStr for BatteryInfoName {
     fn from_str(s: &str) -> Result<Self, Self::Err> {
         match s {
             "charge_now" | "charge" => Ok(Self::ChargeNow),
-            "capacity"
-            | "charge_percentage"
-            | "percentage"
-            | "percent" => Ok(Self::Capacity),
+            "capacity" | "charge_percentage" | "percentage" | "percent" => Ok(Self::Capacity),
             "charge_full" => Ok(Self::ChargeFull),
             "current_now" | "current" => Ok(Self::CurrentNow),
             "time_remaining" | "remaining" | "time" => Ok(Self::TimeRemaining),
