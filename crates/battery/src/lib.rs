@@ -4,7 +4,6 @@ use std::{fmt::Display, fs, io, path::PathBuf, str::FromStr};
 use gi_core::Error;
 use serde::Serialize;
 
-
 const SYS_BATTERIES_PATH: &str = "/sys/class/power_supply";
 
 pub type Capacity = f32;

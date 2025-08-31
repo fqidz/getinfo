@@ -11,6 +11,8 @@ use notify::{Config, Event, PollWatcher, RecursiveMode, Watcher};
 use serde::Serialize;
 use serde::ser::SerializeMap;
 
+use crate::commands::SubCommandExt;
+
 pub trait BatteryInfoNameExt {
     fn files_to_watch(&self) -> Vec<&str>;
 }
@@ -32,6 +34,7 @@ impl BatteryInfoNameExt for BatteryInfoName {
 pub fn cli() -> Command {
     Command::new("battery")
         .about("Scripts for battery info")
+        .common_args()
         .arg(
             Arg::new("info_names")
                 .value_name("INFO_NAME")
@@ -49,32 +52,6 @@ pub fn cli() -> Command {
                 .help("Specify battery name in the case of multiple batteries (e.g. 'BAT1'). Defaults to lowest-numbered battery"),
         )
         .arg(
-            Arg::new("watch")
-                .short('w')
-                .long("watch")
-                .conflicts_with("poll")
-                .action(ArgAction::SetTrue)
-                .help("Outputs only when info changes"),
-        )
-        .arg(
-            Arg::new("poll")
-                .short('p')
-                .long("poll")
-                .conflicts_with("watch")
-                .value_parser(value_parser!(u64))
-                .value_name("MILLISECONDS")
-                .help("Outputs after every interval"),
-        )
-        .arg(
-            Arg::new("separator")
-                .short('s')
-                .long("separator")
-                .conflicts_with("json")
-                .value_name("STRING")
-                .default_value(" ")
-                .help("Character or string to use for separating output infos"),
-        )
-        .arg(
             Arg::new("format_output")
                 .short('f')
                 .long("format-output")
@@ -82,14 +59,6 @@ pub fn cli() -> Command {
                 .value_name("FORMAT_TYPE")
                 .default_value("no_symbols")
                 .help("Specify how the output fields should be formatted"),
-        )
-        .arg(
-            Arg::new("json")
-                .short('j')
-                .long("json")
-                .conflicts_with("separator")
-                .action(ArgAction::SetTrue)
-                .help("Formats output into json"),
         )
 }
 
