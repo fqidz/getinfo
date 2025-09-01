@@ -150,4 +150,22 @@ they're watching a YouTube video at the same time.
 #### How to
 Have an option where it only outputs the latest active bus
 
+## Listening to when device is awoken from sleep
 
+- [org.freedesktop.login1.Manager man page](https://www.freedesktop.org/software/systemd/man/latest/org.freedesktop.login1.html)
+- [all about systemd inhibit & inhibitor locks](https://www.freedesktop.org/wiki/Software/systemd/inhibit/)
+
+```bash
+sudo dbus-monitor --system "interface='org.freedesktop.login1.Manager',member='PrepareForSleep'"
+```
+```
+# closed laptop lid
+signal time=1756723087.698075 sender=:1.5 -> destination=(null destination) serial=13886 path=/org/freedesktop/login1; interface=org.freedesktop.login1.Manager; member=PrepareForSleep
+   boolean true
+
+# opened laptop lid & screen turned on
+signal time=1756723096.223427 sender=:1.5 -> destination=(null destination) serial=13900 path=/org/freedesktop/login1; interface=org.freedesktop.login1.Manager; member=PrepareForSleep
+   boolean false
+```
+
+We should listen to when `PrepareForSleep` becomes `false` from `org.freedesktop.login1.Manager`
