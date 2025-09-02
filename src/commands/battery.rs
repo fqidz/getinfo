@@ -93,7 +93,7 @@ impl<'a> BatterySubcommand<'a> {
 
         let battery_path = &self
             .batteries
-            .get_battery(&self.context.battery_name)
+            .get_battery(self.context.battery_name)
             .unwrap()
             .path;
 
@@ -138,7 +138,7 @@ impl<'a> BatterySubcommand<'a> {
     fn get_output_string(&self) -> String {
         let battery = self
             .batteries
-            .get_battery(&self.context.battery_name)
+            .get_battery(self.context.battery_name)
             .unwrap();
 
         let mut battery_output =
