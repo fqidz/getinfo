@@ -5,6 +5,7 @@ use gi_core::Timestamp;
 use serde::{ser::SerializeMap, Serialize};
 
 pub mod battery;
+pub mod media;
 
 pub trait SubCommandExt {
     fn arg_watch(self) -> Self;

@@ -48,6 +48,7 @@ gi_media_player = { workspace = true }
 gi_battery = { workspace = true }
 serde = { workspace = true }
 serde_json = { workspace = true }
+tokio = { workspace = true }
 
 # https://github.com/uutils/coreutils/blob/56ce0e28ad830e276929d9e2f798fb55bbc5112c/Cargo.toml#L623
 # cargo clippy --all-targets --workspace --message-format=json --quiet \
