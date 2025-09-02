@@ -1,17 +1,15 @@
 use std::collections::HashSet;
 use std::fmt::Display;
-use std::str::FromStr;
 use std::{sync::mpsc, time::Duration};
 
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
-use gi_battery::{
-    AsTimestamp, Batteries, BatteryInfoName, BatteryStatus, Timestamp, get_main_battery_name,
-};
+use gi_battery::{Batteries, BatteryInfoName, BatteryStatus, get_main_battery_name};
+use gi_core::AsTimestamp;
 use notify::{Config, Event, PollWatcher, RecursiveMode, Watcher};
 use serde::Serialize;
 use serde::ser::SerializeMap;
 
-use crate::commands::SubCommandExt;
+use crate::commands::{Field, FieldValue, FormatOutputType, SubCommandExt};
 
 pub trait BatteryInfoNameExt {
     fn files_to_watch(&self) -> Vec<&str>;
@@ -60,45 +58,6 @@ pub fn cli() -> Command {
                 .default_value("no_symbols")
                 .help("Specify how the output fields should be formatted"),
         )
-}
-
-enum FieldValue {
-    I32(i32),
-    U64(u64),
-    F32(f32),
-    String(String),
-    Timestamp(Timestamp),
-}
-
-struct Field<'a> {
-    label: &'a str,
-    value: FieldValue,
-}
-
-impl<'a> Field<'a> {
-    pub fn new(label: &'a str, value: FieldValue) -> Self {
-        Self { label, value }
-    }
-}
-
-#[derive(Clone)]
-enum FormatOutputType {
-    Raw,
-    NoSymbols,
-    Formatted,
-}
-
-impl FromStr for FormatOutputType {
-    type Err = String;
-
-    fn from_str(s: &str) -> Result<Self, Self::Err> {
-        match s {
-            "raw" => Ok(Self::Raw),
-            "no_symbols" => Ok(Self::NoSymbols),
-            "formatted" => Ok(Self::Formatted),
-            _ => Err(format!("Invalid format-output type: {}", s)),
-        }
-    }
 }
 
 struct BatteryContext<'a> {

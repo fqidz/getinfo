@@ -20,7 +20,7 @@ path = "src/lib.rs"
 [dependencies]
 clap = { workspace = true }
 thiserror = { workspace = true }
+serde = { workspace = true }
 # dashmap = { workspace = true }
 # futures-lite = { workspace = true }
-# serde = { workspace = true }
 # tokio = { workspace = true }

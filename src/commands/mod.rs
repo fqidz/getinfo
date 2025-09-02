@@ -1,4 +1,7 @@
+use std::str::FromStr;
+
 use clap::{Arg, ArgAction, Command, value_parser};
+use gi_core::Timestamp;
 
 pub mod battery;
 
@@ -59,5 +62,44 @@ impl SubCommandExt for Command {
 
     fn common_args(self) -> Self {
         self.arg_watch().arg_poll().arg_separator().arg_json()
+    }
+}
+
+pub enum FieldValue {
+    I32(i32),
+    U64(u64),
+    F32(f32),
+    String(String),
+    Timestamp(Timestamp),
+}
+
+pub struct Field<'a> {
+    pub label: &'a str,
+    pub value: FieldValue,
+}
+
+impl<'a> Field<'a> {
+    pub fn new(label: &'a str, value: FieldValue) -> Self {
+        Self { label, value }
+    }
+}
+
+#[derive(Clone)]
+pub enum FormatOutputType {
+    Raw,
+    NoSymbols,
+    Formatted,
+}
+
+impl FromStr for FormatOutputType {
+    type Err = String;
+
+    fn from_str(s: &str) -> Result<Self, Self::Err> {
+        match s {
+            "raw" => Ok(Self::Raw),
+            "no_symbols" => Ok(Self::NoSymbols),
+            "formatted" => Ok(Self::Formatted),
+            _ => Err(format!("Invalid format-output type: {}", s)),
+        }
     }
 }

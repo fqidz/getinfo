@@ -1,15 +1,13 @@
 // https://www.kernel.org/doc/Documentation/ABI/testing/sysfs-class-power
 use std::{fmt::Display, fs, io, path::PathBuf, str::FromStr};
 
-use gi_core::Error;
-use serde::Serialize;
+use gi_core::{Error, Seconds};
 
 const SYS_BATTERIES_PATH: &str = "/sys/class/power_supply";
 
 pub type Capacity = f32;
 pub type MicroAmpHours = i32;
 pub type MicroAmp = i32;
-pub type Seconds = u64;
 
 pub struct Batteries {
     pub main_battery_name: String,
@@ -140,46 +138,6 @@ impl Batteries {
         self.items
             .iter()
             .find(|battery| battery.name == *battery_name)
-    }
-}
-
-#[derive(Default, Serialize)]
-pub struct Timestamp {
-    #[serde(rename = "h")]
-    hours: u64,
-
-    #[serde(rename = "m")]
-    minutes: u8,
-
-    #[serde(rename = "s")]
-    seconds: u8,
-}
-
-impl Display for Timestamp {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{:0>2}:{:0>2}:{:0>2}",
-            self.hours, self.minutes, self.seconds
-        )
-    }
-}
-
-pub trait AsTimestamp {
-    fn as_timestamp(&self) -> Timestamp;
-}
-
-impl AsTimestamp for Seconds {
-    fn as_timestamp(&self) -> Timestamp {
-        let hours = self / 3600;
-        let minutes = self / 60 % 60;
-        let seconds = self % 60;
-
-        Timestamp {
-            hours,
-            minutes: minutes.try_into().expect("max value is 59"),
-            seconds: seconds.try_into().expect("max value is 59"),
-        }
     }
 }
 
