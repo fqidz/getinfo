@@ -167,7 +167,7 @@ impl<'a> Serialize for BatteryOutput<'a> {
 }
 
 impl<'a> BatterySubcommand<'a> {
-    fn init(
+    fn new(
         batteries: Batteries,
         info_names: &'a Vec<&'a BatteryInfoName>,
         context: BatteryContext<'a>,
@@ -335,7 +335,7 @@ pub fn exec(args: &ArgMatches) {
 
     let batteries = Batteries::init().unwrap();
 
-    let mut battery_subcommand = BatterySubcommand::init(
+    let mut battery_subcommand = BatterySubcommand::new(
         batteries,
         &input_info_names,
         BatteryContext {
