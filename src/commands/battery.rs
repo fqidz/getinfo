@@ -1,15 +1,12 @@
 use std::collections::HashSet;
-use std::fmt::Display;
 use std::{sync::mpsc, time::Duration};
 
 use clap::{Arg, ArgAction, ArgMatches, Command, value_parser};
 use gi_battery::{Batteries, BatteryInfoName, BatteryStatus, get_main_battery_name};
 use gi_core::AsTimestamp;
 use notify::{Config, Event, PollWatcher, RecursiveMode, Watcher};
-use serde::Serialize;
-use serde::ser::SerializeMap;
 
-use crate::commands::{Field, FieldValue, FormatOutputType, SubCommandExt};
+use crate::commands::{Field, FieldValue, FormatOutputType, Output, SubCommandExt};
 
 pub trait BatteryInfoNameExt {
     fn files_to_watch(&self) -> Vec<&str>;
@@ -71,58 +68,6 @@ struct BatterySubcommand<'a> {
     batteries: Batteries,
     info_names: &'a Vec<&'a BatteryInfoName>,
     context: BatteryContext<'a>,
-}
-
-#[derive(Default)]
-struct BatteryOutput<'a> {
-    fields: Vec<Field<'a>>,
-    separator: Option<String>,
-}
-
-impl<'a> BatteryOutput<'a> {
-    pub fn new(fields: Vec<Field<'a>>, separator: Option<String>) -> Self {
-        Self { fields, separator }
-    }
-}
-
-impl<'a> Display for BatteryOutput<'a> {
-    fn fmt(&self, f: &mut std::fmt::Formatter<'_>) -> std::fmt::Result {
-        write!(
-            f,
-            "{}",
-            self.fields
-                .iter()
-                .map(|f| match &f.value {
-                    FieldValue::I32(v) => v.to_string(),
-                    FieldValue::U64(v) => v.to_string(),
-                    FieldValue::F32(v) => v.to_string(),
-                    FieldValue::String(v) => v.to_string(),
-                    FieldValue::Timestamp(timestamp) => timestamp.to_string(),
-                })
-                .collect::<Vec<_>>()
-                .join(&self.separator.clone().unwrap())
-        )
-    }
-}
-
-impl<'a> Serialize for BatteryOutput<'a> {
-    fn serialize<S>(&self, serializer: S) -> Result<S::Ok, S::Error>
-    where
-        S: serde::Serializer,
-    {
-        let mut state = serializer.serialize_map(Some(self.fields.len()))?;
-        for field in &self.fields {
-            match &field.value {
-                // TODO: fix duplicate code
-                FieldValue::I32(v) => state.serialize_entry(field.label, v)?,
-                FieldValue::U64(v) => state.serialize_entry(field.label, v)?,
-                FieldValue::F32(v) => state.serialize_entry(field.label, v)?,
-                FieldValue::String(v) => state.serialize_entry(field.label, v)?,
-                FieldValue::Timestamp(v) => state.serialize_entry(field.label, v)?,
-            }
-        }
-        state.end()
-    }
 }
 
 impl<'a> BatterySubcommand<'a> {
@@ -197,7 +142,7 @@ impl<'a> BatterySubcommand<'a> {
             .unwrap();
 
         let mut battery_output =
-            BatteryOutput::new(Vec::with_capacity(1), Some(self.context.separator.clone()));
+            Output::new(Vec::with_capacity(1), Some(self.context.separator.clone()));
 
         for info_name in self.info_names.iter() {
             let field_value = match info_name {
