@@ -58,9 +58,9 @@ pub fn cli() -> Command {
 }
 
 struct BatteryContext<'a> {
-    battery_name: String,
+    battery_name: &'a str,
     format_output: &'a FormatOutputType,
-    separator: String,
+    separator: &'a str,
     output_as_json: bool,
 }
 
@@ -142,7 +142,7 @@ impl<'a> BatterySubcommand<'a> {
             .unwrap();
 
         let mut battery_output =
-            Output::new(Vec::with_capacity(1), Some(self.context.separator.clone()));
+            Output::new(Vec::with_capacity(1), Some(self.context.separator));
 
         for info_name in self.info_names.iter() {
             let field_value = match info_name {
@@ -243,9 +243,9 @@ pub fn exec(args: &ArgMatches) {
         batteries,
         &input_info_names,
         BatteryContext {
-            battery_name: battery_name.to_string(),
+            battery_name,
             format_output,
-            separator: separator.to_string(),
+            separator,
             output_as_json: *output_as_json,
         },
     );

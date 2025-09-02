@@ -108,11 +108,11 @@ impl FromStr for FormatOutputType {
 #[derive(Default)]
 pub struct Output<'a> {
     pub fields: Vec<Field<'a>>,
-    pub separator: Option<String>,
+    pub separator: Option<&'a str>,
 }
 
 impl<'a> Output<'a> {
-    pub fn new(fields: Vec<Field<'a>>, separator: Option<String>) -> Self {
+    pub fn new(fields: Vec<Field<'a>>, separator: Option<&'a str>) -> Self {
         Self { fields, separator }
     }
 }
@@ -132,7 +132,7 @@ impl<'a> Display for Output<'a> {
                     FieldValue::Timestamp(timestamp) => timestamp.to_string(),
                 })
                 .collect::<Vec<_>>()
-                .join(&self.separator.clone().unwrap())
+                .join(self.separator.expect("should always have a separator"))
         )
     }
 }
