@@ -1,4 +1,5 @@
 use clap::{ArgMatches, Command};
+use gi_media_player::foo;
 use crate::commands::{FormatOutputType, SubCommandExt};
 
 pub fn cli() -> Command {
@@ -35,5 +36,5 @@ impl MediaSubcommand {
 }
 
 pub async fn exec(args: &ArgMatches) {
-    todo!()
+    foo();
 }
